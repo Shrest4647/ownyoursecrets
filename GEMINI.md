@@ -72,6 +72,13 @@ The provided diagram (referenced externally) is the authoritative source for the
 - **Git Sync:** The LLM should create the UI for Git setup and the component for the manual sync page. It should integrate placeholder calls for Git operations (`clone`, `pull`, `push`).
 - **Passcode:** A simple PIN/passcode for quick access. This is _not_ used for file encryption (Age handles that), but for app-level access control. It should be stored securely (e.g., using `react-native-keychain` or encrypted preferences).
 
+## Development Guidelines and Preferences
+
+- **Navigation:** Use `expo-router` for file-based routing instead of `react-navigation`.
+- **Styling:** Prefer Tailwind CSS for all styling. Utilize the colors and typography defined in `apps/own-your-secrets/global.css`.
+- **UI Components:** Use `react-native-reusables` (the shadcn/ui equivalent for React Native) for UI components. New components should be added to `packages/ui`.
+- **CLI Commands:** When using `react-native-reusables` CLI commands (e.g., `npx @react-native-reusables/cli@latest add <component>`), ensure they are run from the specific app or package directory (e.g., `apps/own-your-secrets`) and not the monorepo root.
+
 ## App Architecture
 
 ![App Diagram](./app-diagram.png)
