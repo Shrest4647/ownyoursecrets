@@ -6,12 +6,41 @@ import {
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import { Platform } from "react-native";
 import { NAV_THEME } from "@repo/ui/lib/constants";
 import { useColorScheme } from "@repo/ui/lib/useColorScheme";
+
+import * as SecureStore from 'expo-secure-store';
+
+const AuthContext = React.createContext<{ setSetupComplete: (value: boolean) => void } | null>(null);
+
+// This hook can be used to access the user info.
+export function useAuth() {
+  return React.useContext(AuthContext);
+}
+
+// Placeholder for authentication state
+const useAuthLogic = () => {
+  const [isSetupComplete, setSetupComplete] = React.useState(false);
+
+  React.useEffect(() => {
+    SecureStore.getItemAsync('hasSetupComplete').then(value => {
+      if (value === 'true') {
+        setSetupComplete(true);
+      }
+    });
+  }, []);
+
+  const setSetupCompleteValue = (value: boolean) => {
+    SecureStore.setItemAsync('hasSetupComplete', value.toString());
+    setSetupComplete(value);
+  }
+
+  return { isSetupComplete, setSetupComplete: setSetupCompleteValue };
+};
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -27,10 +56,29 @@ export {
   ErrorBoundary,
 } from "expo-router";
 
+function Root() {
+  const { isSetupComplete } = useAuthLogic();
+  const segments = useSegments();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const inAuthGroup = segments[0] === '(protected)';
+
+    if (isSetupComplete && !inAuthGroup) {
+      router.replace('/(protected)');
+    } else if (!isSetupComplete) {
+      router.replace('/(guest)');
+    }
+  }, [isSetupComplete]);
+
+  return <Stack screenOptions={{ headerShown: false }} />;
+}
+
 export default function RootLayout() {
   const hasMounted = React.useRef(false);
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
+  const authLogic = useAuthLogic();
 
   useIsomorphicLayoutEffect(() => {
     if (hasMounted.current) {
@@ -50,10 +98,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-      <Stack />
-    </ThemeProvider>
+    <AuthContext.Provider value={authLogic}>
+      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+        <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+        <Root />
+      </ThemeProvider>
+    </AuthContext.Provider>
   );
 }
 
