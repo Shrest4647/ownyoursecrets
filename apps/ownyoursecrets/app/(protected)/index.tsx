@@ -3,38 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import { View, FlatList, SafeAreaView } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { listSecrets, StoredSecret } from "../../lib/vault";
+import { useAuth } from "@/store/auth-context";
 
 import { Pressable } from "react-native-gesture-handler";
 
-const dummySecrets = [
-  { id: "1", name: "Google", meta: "Login details", updated: "2 days ago" },
-  {
-    id: "2",
-    name: "Facebook",
-    meta: "Login details and more and more and more and more",
-    updated: "1 week ago",
-  },
-  { id: "3", name: "Twitter", meta: "Login details", updated: "3 weeks ago" },
-  {
-    id: "4",
-    name: "Amazon",
-    meta: "Shopping account \n and somthing else",
-    updated: "1 day ago",
-  },
-  {
-    id: "5",
-    name: "Netflix",
-    meta: "Streaming service",
-    updated: "2 days ago",
-  },
-  {
-    id: "6",
-    name: "Bank of America",
-    meta: "Banking login",
-    updated: "3 days ago",
-  },
-];
+const [secrets, setSecrets] = useState<StoredSecret[]>([]);
 
 export default function SecretsListingPage() {
   const router = useRouter();
@@ -42,20 +17,39 @@ export default function SecretsListingPage() {
 
   // TODO: Replace with real data
   // TODO: Read all the secrets from the storage, decrypt them, and display them
-  const [filteredSecrets, setFilteredSecrets] = useState(dummySecrets);
+  const [filteredSecrets, setFilteredSecrets] = useState<StoredSecret[]>([]);
+  const { ageSecretKey } = useAuth()!;
+
+  const loadSecrets = useCallback(async () => {
+    if (!ageSecretKey) {
+      setSecrets([]);
+      return;
+    }
+    try {
+      const loadedSecrets = await listSecrets();
+      setSecrets(loadedSecrets);
+    } catch (error) {
+      console.error("Failed to load secrets:", error);
+      setSecrets([]);
+    }
+  }, [ageSecretKey]);
+
+  useEffect(() => {
+    loadSecrets();
+  }, [loadSecrets]);
 
   useEffect(() => {
     if (searchQuery === "") {
-      setFilteredSecrets(dummySecrets);
+      setFilteredSecrets(secrets);
     } else {
-      const filtered = dummySecrets.filter(
+      const filtered = secrets.filter(
         (secret) =>
-          secret.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          secret.meta.toLowerCase().includes(searchQuery.toLowerCase())
+          secret.metadata.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          secret.createdAt.toLowerCase().includes(searchQuery.toLowerCase()) // You might want to search other fields too
       );
       setFilteredSecrets(filtered);
     }
-  }, [searchQuery]);
+  }, [searchQuery, secrets]);
 
   return (
     <SafeAreaView className='flex-1 p-5 bg-background'>
@@ -81,28 +75,27 @@ export default function SecretsListingPage() {
         />
         <FlatList
           data={filteredSecrets}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
+          keyExtractor={(item) => item.metadata + item.createdAt}
+          renderItem={({ item }) => (
             <Pressable
-              key={`${item.id}-${index}`}
               onPress={() =>
                 router.push({
                   pathname: "/EditPassPage",
-                  params: { id: item.id, name: item.name, meta: item.meta },
+                  params: { name: item.metadata, createdAt: item.createdAt },
                 })
               }
             >
               <View className='p-4 border-b border-zinc-200 bg-card mb-2.5'>
                 <View className='flex-row items-center justify-between'>
                   <Text className='text-lg font-bold text-foreground'>
-                    {item.name}
+                    {item.metadata}
                   </Text>
                   <Text className='text-xs text-muted-foreground mt-1'>
-                    {item.updated}
+                    {new Date(item.createdAt).toLocaleDateString()}
                   </Text>
                 </View>
                 <Text className='text-muted-foreground line-clamp-1 text-ellipsis'>
-                  {item.meta}
+                  {item.metadata}
                 </Text>
               </View>
             </Pressable>

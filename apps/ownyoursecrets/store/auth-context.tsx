@@ -1,7 +1,11 @@
 import * as React from "react";
 import * as SecureStore from "expo-secure-store";
 
-import { SETUP_COMPLETE_KEY, PASSCODE_ENABLED_KEY } from "./constants";
+import {
+  SETUP_COMPLETE_KEY,
+  PASSCODE_ENABLED_KEY,
+  AGE_SECRET_KEY_STORAGE_KEY,
+} from "./constants";
 
 export const AuthContext = React.createContext<{
   setupComplete: boolean;
@@ -10,6 +14,7 @@ export const AuthContext = React.createContext<{
   setPasscodeEnabled: (value: boolean) => void;
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
+  ageSecretKey: string;
 } | null>(null);
 
 export function useAuth() {
@@ -20,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [setupComplete, setSetupCompleteInternal] = React.useState(false);
   const [passcodeEnabled, setPasscodeEnabledInternal] = React.useState(false);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [ageSecretKey, setAgeSecretKey] = React.useState("");
 
   React.useEffect(() => {
     const loadAuthStates = async () => {
@@ -32,6 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await SecureStore.getItemAsync(PASSCODE_ENABLED_KEY);
         if (passcodeValue === "true") {
           setPasscodeEnabledInternal(true);
+        }
+        const ageSecretKeyValue = await SecureStore.getItemAsync(
+          AGE_SECRET_KEY_STORAGE_KEY
+        );
+        if (ageSecretKeyValue) {
+          setAgeSecretKey(ageSecretKeyValue);
         }
       } catch (error) {
         console.error("Failed to load auth states:", error);
@@ -67,6 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setPasscodeEnabled,
         isLoggedIn,
         setIsLoggedIn,
+        ageSecretKey,
       }}
     >
       {children}

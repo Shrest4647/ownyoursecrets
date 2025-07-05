@@ -67,9 +67,18 @@ The provided diagram (referenced externally) is the authoritative source for the
 
 ## Key Functionality Notes
 
-- **Encryption/Decryption:** The LLM should scaffold the UI and logic flow assuming functions like `encryptSecret(data, ageKey)` and `decryptSecret(encryptedData, ageKey)` exist (presumably in a `packages/crypto` or native module). It should focus on _when_ these functions are called.
-- **File Storage:** Secrets will be stored as encrypted YAML files (e.g., `google.yaml.sops`) in a specific app directory. The LLM should integrate file read/write operations (using `react-native-fs` or similar, or just calling placeholder storage functions).
+- **Encryption/Decryption:** The `encryptSecret(data, ageKey)` and `decryptSecret(encryptedData, ageKey)` functions are implemented and tested in `lib/crypto.ts`. The LLM should focus on _when_ these functions are called.
+- **File Storage:** Secrets will be stored as encrypted JSON files (`.jsop`) in a vault directory within the app's document directory, utilizing `expo-file-system`. Secret names can include slashes to create subdirectories (e.g., `google/2fa` will be stored in `vault/google/2fa.jsop`). Secret metadata is stored as a plain text string.
 - **Git Sync:** The LLM should create the UI for Git setup and the component for the manual sync page. It should integrate placeholder calls for Git operations (`clone`, `pull`, `push`).
+- **Vault Management (`lib/vault.ts`):**
+  - `saveSecret(secretName, secretData, metadata, ageSecretKey)`: Encrypts and saves a new secret to the vault. Handles creation of subdirectories based on `secretName`.
+  - `getSecret(secretName, ageSecretKey)`: Retrieves and decrypts a specific secret from the vault.
+  - `listSecrets()`: Recursively lists all secrets in the vault, providing their metadata and file paths.
+  - `editSecret(secretName, newSecretData, newMetadata, ageSecretKey)`: Updates an existing secret's data and metadata in place.
+  - `deleteSecret(secretName)`: Removes a secret file from the vault.
+  - `importVault(importedData, ageSecretKey)`: Imports multiple secrets from a JSON backup file into the vault.
+  - `exportVault(ageSecretKey)`: Exports all secrets from the vault into a single JSON object.
+- **Fuzzy Search:** The `SecretsListingPage` now utilizes `fuse.js` for fuzzy searching, prioritizing secret names and metadata for improved search results.
 - **Passcode:** A simple PIN/passcode for quick access. This is _not_ used for file encryption (Age handles that), but for app-level access control. It should be stored securely (e.g., using `react-native-keychain` or encrypted preferences).
 
 ## Development Guidelines and Preferences
