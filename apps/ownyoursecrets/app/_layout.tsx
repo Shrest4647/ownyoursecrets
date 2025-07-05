@@ -16,6 +16,7 @@ import { NAV_THEME } from "@repo/ui/lib/constants";
 import { useColorScheme } from "@repo/ui/lib/useColorScheme";
 
 import { AuthProvider, useAuth } from "@/store/auth-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -68,7 +69,7 @@ function Root() {
 
 export default function RootLayout() {
   const hasMounted = React.useRef(false);
-  const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
   useIsomorphicLayoutEffect(() => {
@@ -92,10 +93,12 @@ export default function RootLayout() {
     <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
-          <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-            <Root />
-          </ThemeProvider>
+          <SafeAreaProvider>
+            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+              <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+              <Root />
+            </ThemeProvider>
+          </SafeAreaProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </AuthProvider>
