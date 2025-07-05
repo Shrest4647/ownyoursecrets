@@ -9,7 +9,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
+    "@repo/typescript-config": "workspace:*",
     "@types/react": "^18.2.14",
     "tsup": "^8.0.1",
     "typescript": "5.5.4"
