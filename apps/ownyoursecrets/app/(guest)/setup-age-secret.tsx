@@ -11,16 +11,18 @@ import { BottomSheetView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "react-native";
 import { useAuth } from "@/store/auth-context";
-
-const AGE_SECRET_KEY_STORAGE_KEY = "ageSecretKey";
+import { useRouter } from "expo-router";
+import { AGE_SECRET_KEY_STORAGE_KEY } from "@/store/constants";
 
 export default function AgeSecretKeySetupPage() {
   const auth = useAuth();
   const bottomSheetRef = useSheetRef();
+  const router = useRouter();
 
   const [secretKeyInput, setSecretKeyInput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [keySaved, setKeySaved] = useState(false);
+  const [displayObscuredKey, setDisplayObscuredKey] = useState(false);
 
   const generateNewKey = async () => {
     setIsGenerating(true);
@@ -54,6 +56,7 @@ export default function AgeSecretKeySetupPage() {
         secretKeyInput
       );
       setKeySaved(true);
+      setDisplayObscuredKey(true);
       Alert.alert("Success", "Secret key saved securely!");
       bottomSheetRef.current?.close();
     } catch (error) {
@@ -65,6 +68,7 @@ export default function AgeSecretKeySetupPage() {
   const finishSetup = () => {
     if (keySaved) {
       auth?.setSetupComplete(true);
+      router.replace("/PasscodeSetupPage");
     } else {
       Alert.alert("Warning", "Please generate or import a secret key first.");
     }
@@ -119,6 +123,11 @@ export default function AgeSecretKeySetupPage() {
             </Text>
           </View>
           <View className='mb-8 items-center'>
+            {displayObscuredKey && (
+              <Text className='text-lg text-foreground mb-4'>
+                Secret Key: {"*".repeat(secretKeyInput.length)}
+              </Text>
+            )}
             <Button
               className={`w-full py-4 rounded-full bg-accent ${!keySaved ? "opacity-50 pointer-events-none" : ""}`}
               onPress={finishSetup}

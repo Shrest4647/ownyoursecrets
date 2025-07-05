@@ -49,7 +49,7 @@ export default function SyncOptionSelectionPage() {
         <View className='p-4 rounded-lg'>
           <Button
             className='w-full py-4 rounded-full flex-row items-center justify-center bg-accent gap-4'
-            onPress={() => router.push("/AgeSecretKeySetupPage")}
+            onPress={() => router.push("/setup-age-secret")}
           >
             <Smartphone size={20} className='text-accent-foreground mr-3' />
             <Text className='text-lg text-accent-foreground'>

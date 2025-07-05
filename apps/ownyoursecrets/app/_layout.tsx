@@ -15,28 +15,7 @@ import { Platform } from "react-native";
 import { NAV_THEME } from "@repo/ui/lib/constants";
 import { useColorScheme } from "@repo/ui/lib/useColorScheme";
 
-import * as SecureStore from "expo-secure-store";
-import { AuthContext } from "@/store/auth-context";
-
-// Placeholder for authentication state
-const useAuthLogic = () => {
-  const [isSetupComplete, setSetupComplete] = React.useState(false);
-
-  React.useEffect(() => {
-    SecureStore.getItemAsync("hasSetupComplete").then((value) => {
-      if (value === "true") {
-        setSetupComplete(true);
-      }
-    });
-  }, []);
-
-  const setSetupCompleteValue = (value: boolean) => {
-    SecureStore.setItemAsync("hasSetupComplete", value.toString());
-    setSetupComplete(value);
-  };
-
-  return { isSetupComplete, setSetupComplete: setSetupCompleteValue };
-};
+import { AuthProvider, useAuth } from "@/store/auth-context";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -53,19 +32,36 @@ export {
 } from "expo-router";
 
 function Root() {
-  const { isSetupComplete } = useAuthLogic();
+  const { setupComplete, passcodeEnabled, isLoggedIn } = useAuth()!;
   const segments = useSegments();
   const router = useRouter();
 
   React.useEffect(() => {
-    const inAuthGroup = segments[0] === "(protected)";
+    const inGuestGroup = segments[0] === "(guest)";
+    const inProtectedGroup = segments[0] === "(protected)";
+    const inPasscodePage = inGuestGroup && segments.at(1) === "PassCodePage";
 
-    if (isSetupComplete && !inAuthGroup) {
-      router.replace("/(protected)");
-    } else if (!isSetupComplete) {
-      router.replace("/(guest)");
+    if (!setupComplete) {
+      // If setup is not complete, always redirect to the guest flow's root
+      if (!inGuestGroup) {
+        router.replace("/(guest)");
+      }
+    } else {
+      // setupComplete is true
+      if (passcodeEnabled && !isLoggedIn) {
+        // If passcode is enabled, and we are not on the passcode page, redirect to it
+        if (!inPasscodePage) {
+          router.replace("/(guest)/PassCodePage");
+        }
+      } else {
+        // passcodeEnabled is false
+        // If passcode is disabled, and we are not in the protected group, redirect to it
+        if (!inProtectedGroup) {
+          router.replace("/(protected)");
+        }
+      }
     }
-  }, [isSetupComplete]);
+  }, [setupComplete, passcodeEnabled, segments, router]);
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }
@@ -74,7 +70,6 @@ export default function RootLayout() {
   const hasMounted = React.useRef(false);
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-  const authLogic = useAuthLogic();
 
   useIsomorphicLayoutEffect(() => {
     if (hasMounted.current) {
@@ -94,7 +89,7 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthContext.Provider value={authLogic}>
+    <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
@@ -103,7 +98,7 @@ export default function RootLayout() {
           </ThemeProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-    </AuthContext.Provider>
+    </AuthProvider>
   );
 }
 
