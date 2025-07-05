@@ -15,7 +15,7 @@
 ## Technology Stack
 
 - **Mobile Framework:** React Native
-- **Monorepo Structure:** The project is structured as a monorepo containing multiple `packages` (shared components, logic, utilities) and `apps` (the main mobile application). The mobile app will reside in `apps/own-your-secrets`.
+- **Monorepo Structure:** The project is structured as a monorepo containing multiple `packages` (shared components, logic, utilities) and `apps` (the main mobile application). The mobile app will reside in `apps/ownyoursecrets`.
 - **Encryption:** `sops` and `age` via the `humphd/sops-age` library/integration for React Native. This will involve interacting with native code to perform encryption/decryption operations.
 - **Navigation:** React Navigation (specifically, stack navigators).
 - **UI:** Standard React Native components, potentially leveraging reusable components from a `packages/ui` library within the monorepo (assume basic React Native components if a specific UI package isn't defined yet).
@@ -28,7 +28,7 @@
 
 /
 |- apps/
-| |- own-your-secrets/  <- The main React Native app
+| |- ownyoursecrets/  <- The main React Native app
 |     |- app/
 |     |  |- (guest|protected)/  <- Screens for guest and protected flows
 |     `- package.json
@@ -39,7 +39,7 @@
 
 ```
 
-The primary focus for the LLM agent will be generating code within `apps/own-your-secrets/app/`.
+The primary focus for the LLM agent will be generating code within `apps/ownyoursecrets/app/`.
 
 ## User Flow and Screens
 
@@ -75,9 +75,9 @@ The provided diagram (referenced externally) is the authoritative source for the
 ## Development Guidelines and Preferences
 
 - **Navigation:** Use `expo-router` for file-based routing instead of `react-navigation`.
-- **Styling:** Prefer Tailwind CSS for all styling. Utilize the colors and typography defined in `apps/own-your-secrets/global.css`.
+- **Styling:** Prefer Tailwind CSS for all styling. Utilize the colors and typography defined in `apps/ownyoursecrets/global.css`.
 - **UI Components:** Use `react-native-reusables` (the shadcn/ui equivalent for React Native) for UI components. New components should be added to `packages/ui`.
-- **CLI Commands:** When using `react-native-reusables` CLI commands (e.g., `npx @react-native-reusables/cli@latest add <component>`), ensure they are run from the specific app or package directory (e.g., `apps/own-your-secrets`) and not the monorepo root.
+- **CLI Commands:** When using `react-native-reusables` CLI commands (e.g., `npx @react-native-reusables/cli@latest add <component>`), ensure they are run from the specific app or package directory (e.g., `apps/ownyoursecrets`) and not the monorepo root.
 
 ## App Architecture
 

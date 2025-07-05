@@ -7,37 +7,33 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { Stack, useRouter, useSegments } from "expo-router";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as React from "react";
 import { Platform } from "react-native";
 import { NAV_THEME } from "@repo/ui/lib/constants";
 import { useColorScheme } from "@repo/ui/lib/useColorScheme";
 
-import * as SecureStore from 'expo-secure-store';
-
-const AuthContext = React.createContext<{ setSetupComplete: (value: boolean) => void } | null>(null);
-
-// This hook can be used to access the user info.
-export function useAuth() {
-  return React.useContext(AuthContext);
-}
+import * as SecureStore from "expo-secure-store";
+import { AuthContext } from "@/store/auth-context";
 
 // Placeholder for authentication state
 const useAuthLogic = () => {
   const [isSetupComplete, setSetupComplete] = React.useState(false);
 
   React.useEffect(() => {
-    SecureStore.getItemAsync('hasSetupComplete').then(value => {
-      if (value === 'true') {
+    SecureStore.getItemAsync("hasSetupComplete").then((value) => {
+      if (value === "true") {
         setSetupComplete(true);
       }
     });
   }, []);
 
   const setSetupCompleteValue = (value: boolean) => {
-    SecureStore.setItemAsync('hasSetupComplete', value.toString());
+    SecureStore.setItemAsync("hasSetupComplete", value.toString());
     setSetupComplete(value);
-  }
+  };
 
   return { isSetupComplete, setSetupComplete: setSetupCompleteValue };
 };
@@ -62,12 +58,12 @@ function Root() {
   const router = useRouter();
 
   React.useEffect(() => {
-    const inAuthGroup = segments[0] === '(protected)';
+    const inAuthGroup = segments[0] === "(protected)";
 
     if (isSetupComplete && !inAuthGroup) {
-      router.replace('/(protected)');
+      router.replace("/(protected)");
     } else if (!isSetupComplete) {
-      router.replace('/(guest)');
+      router.replace("/(guest)");
     }
   }, [isSetupComplete]);
 
@@ -99,10 +95,14 @@ export default function RootLayout() {
 
   return (
     <AuthContext.Provider value={authLogic}>
-      <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-        <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-        <Root />
-      </ThemeProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+            <Root />
+          </ThemeProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </AuthContext.Provider>
   );
 }

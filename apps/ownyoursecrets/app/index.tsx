@@ -1,7 +1,6 @@
-
-import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { Text, View } from "react-native";
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -11,16 +10,18 @@ export default function SplashScreen() {
     setTimeout(() => {
       const hasSetupComplete = false; // Placeholder
       if (hasSetupComplete) {
-        router.replace('/PassCodePage');
+        router.replace("/PassCodePage");
       } else {
-        router.replace('/OnboardingPage');
+        router.replace("/OnboardingPage");
       }
     }, 2000); // 2 second splash screen
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <Text className="text-4xl font-bold text-foreground">Own Your Secrets</Text>
+    <View className='flex-1 items-center justify-center bg-background'>
+      <Text className='text-4xl font-bold text-foreground'>
+        Own Your Secrets
+      </Text>
     </View>
   );
 }
