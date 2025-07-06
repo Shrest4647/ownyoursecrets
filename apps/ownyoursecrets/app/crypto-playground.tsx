@@ -40,13 +40,13 @@ export default function CryptoPlayground() {
 
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder='Secret to encrypt'
+        placeholder="Secret to encrypt"
         value={secret}
         onChangeText={setSecret}
       />
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder='AGE Public Key'
+        placeholder="AGE Public Key"
         value={publicKey}
         onChangeText={(t) => {
           console.log(t);
@@ -66,7 +66,7 @@ export default function CryptoPlayground() {
 
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder='AGE Private Key'
+        placeholder="AGE Private Key"
         value={privateKey}
         onChangeText={(t) => {
           console.log(t);

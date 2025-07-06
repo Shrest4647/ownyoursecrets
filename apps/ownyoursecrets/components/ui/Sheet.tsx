@@ -13,7 +13,7 @@ const Sheet = React.forwardRef<
 >(
   (
     { index = 0, backgroundStyle, style, handleIndicatorStyle, ...props },
-    ref
+    ref,
   ) => {
     const { colors } = useColorScheme();
 
@@ -25,7 +25,7 @@ const Sheet = React.forwardRef<
           onPress={() => Keyboard.dismiss()}
         />
       ),
-      []
+      [],
     );
     return (
       <BottomSheetModal
@@ -53,7 +53,7 @@ const Sheet = React.forwardRef<
         {...props}
       />
     );
-  }
+  },
 );
 
 function useSheetRef() {

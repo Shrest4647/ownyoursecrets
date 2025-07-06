@@ -31,20 +31,20 @@ export default function PassCodePage() {
   };
 
   return (
-    <View className='flex-1 items-center justify-center p-8 bg-background gap-8'>
-      <Text className='text-2xl font-bold mb-5 text-foreground'>
+    <View className="flex-1 items-center justify-center p-8 bg-background gap-8">
+      <Text className="text-2xl font-bold mb-5 text-foreground">
         Enter Passcode
       </Text>
-      <View className='w-full items-center'>
+      <View className="w-full items-center">
         <OtpInput
           value={passcode}
           onTextChange={setPasscode}
           length={4}
-          className='mb-5'
+          className="mb-5"
         />
       </View>
       <Button
-        className='w-full py-4 rounded-xl bg-primary'
+        className="w-full py-4 rounded-xl bg-primary"
         onPress={handleLogin}
       >
         <Text>Login</Text>

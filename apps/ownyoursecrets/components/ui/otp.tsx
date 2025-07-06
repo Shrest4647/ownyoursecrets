@@ -49,11 +49,11 @@ const OtpInput = forwardRef<OtpInputComponentRef, OtpInputProps>(
       <_OtpInput
         ref={otpRef}
         numberOfDigits={length}
-        focusColor='green'
+        focusColor="green"
         hideStick={true}
         blurOnFilled={true}
         disabled={false}
-        type='numeric'
+        type="numeric"
         focusStickBlinkingDuration={500}
         textInputProps={{
           accessibilityLabel: "One-Time Password",
@@ -101,7 +101,7 @@ const OtpInput = forwardRef<OtpInputComponentRef, OtpInputProps>(
         }}
       />
     );
-  }
+  },
 );
 
 export { OtpInput };

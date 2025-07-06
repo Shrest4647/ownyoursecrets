@@ -51,7 +51,7 @@ export default function PasscodeSetupPage() {
       auth?.setPasscodeEnabled(false);
       Alert.alert(
         "Passcode Skipped",
-        "You can set up a passcode later in settings."
+        "You can set up a passcode later in settings.",
       );
       router.replace("/"); // Navigate to home after skipping passcode
     } catch (error) {
@@ -65,49 +65,49 @@ export default function PasscodeSetupPage() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
-      <SafeAreaView className='flex-1 bg-background'>
-        <View className='flex-1 px-8 py-4 bg-background gap-4'>
-          <Text className='text-3xl font-bold mb-8 text-foreground text-center'>
+      <SafeAreaView className="flex-1 bg-background">
+        <View className="flex-1 px-8 py-4 bg-background gap-4">
+          <Text className="text-3xl font-bold mb-8 text-foreground text-center">
             Set up Passcode
           </Text>
 
-          <View className='flex-1 items-center justify-start gap-6 mb-4'>
-            <Text className='text-lg text-muted-foreground text-center'>
+          <View className="flex-1 items-center justify-start gap-6 mb-4">
+            <Text className="text-lg text-muted-foreground text-center">
               Enter your 4-digit passcode
             </Text>
-            <View className='w-full items-center px-4'>
+            <View className="w-full items-center px-4">
               <OtpInput
                 value={passcode}
                 onTextChange={setPasscode}
                 length={4}
-                className='mb-4'
+                className="mb-4"
               />
             </View>
-            <Text className='text-lg text-muted-foreground text-center'>
+            <Text className="text-lg text-muted-foreground text-center">
               Confirm your 4-digit passcode
             </Text>
-            <View className='w-full items-center px-4'>
+            <View className="w-full items-center px-4">
               <OtpInput
                 value={confirmPasscode}
                 onTextChange={setConfirmPasscode}
                 length={4}
-                className='mb-8'
+                className="mb-8"
               />
             </View>
-            <View className='flex-1 items-center justify-end w-full gap-6 mb-8'>
+            <View className="flex-1 items-center justify-end w-full gap-6 mb-8">
               <Button
-                className='w-full py-4 rounded-full bg-primary'
+                className="w-full py-4 rounded-full bg-primary"
                 onPress={handleSetPasscode}
               >
-                <Text className='text-lg text-primary-foreground'>
+                <Text className="text-lg text-primary-foreground">
                   Save Passcode
                 </Text>
               </Button>
               <Button
-                className='w-full py-4 rounded-full bg-secondary'
+                className="w-full py-4 rounded-full bg-secondary"
                 onPress={handleSkipPasscode}
               >
-                <Text className='text-lg text-secondary-foreground'>
+                <Text className="text-lg text-secondary-foreground">
                   Skip for now
                 </Text>
               </Button>

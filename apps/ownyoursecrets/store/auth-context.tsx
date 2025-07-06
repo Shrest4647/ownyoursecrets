@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setPasscodeEnabledInternal(true);
         }
         const ageSecretKeyValue = await SecureStore.getItemAsync(
-          AGE_SECRET_KEY_STORAGE_KEY
+          AGE_SECRET_KEY_STORAGE_KEY,
         );
         if (ageSecretKeyValue) {
           setAgeSecretKey(ageSecretKeyValue);

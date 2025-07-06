@@ -25,7 +25,7 @@ config.resolver.extraNodeModules = {
   modules: workspaceRoot,
   "@expo/metro-runtime": path.resolve(
     projectRoot,
-    "node_modules/@expo/metro-runtime"
+    "node_modules/@expo/metro-runtime",
   ),
 };
 

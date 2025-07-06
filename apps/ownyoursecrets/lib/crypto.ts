@@ -6,6 +6,16 @@ export { generateIdentity } from "age-encryption";
 
 export const runtime = createWorkletRuntime("crypto");
 
+export function generatePassword(length: number = 16): string {
+  const charset =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~|}{[]:?><.=";
+  let password = "";
+  for (let i = 0, n = charset.length; i < length; ++i) {
+    password += charset.charAt(Math.floor(Math.random() * n));
+  }
+  return password;
+}
+
 export async function encrypt(
   plaintext: string,
   ageSecretKey: string

@@ -1,4 +1,6 @@
 import "react-native-get-random-values";
+import * as Clipboard from "expo-clipboard";
+import { generatePassword } from "@/lib/crypto";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +10,7 @@ import { View, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { saveSecret } from "../../lib/vault";
 import { useAuth } from "@/store/auth-context";
+import { ClipboardIcon, CopyIcon, DicesIcon } from "lucide-react-native";
 
 const NewPassAddPage = () => {
   const [secretName, setSecretName] = useState("");
@@ -67,17 +70,34 @@ const NewPassAddPage = () => {
           </Text>
         </View>
 
-        <View className='mb-5'>
+        <View className='mb-5 gap-4'>
           <Text className='text-base font-medium text-muted-foreground mb-2'>
             Password <Text className='text-red-500'>*</Text>
           </Text>
-          <Input
-            className='text-base text-foreground'
-            placeholder='Your secret password'
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          <View className='flex-row items-center'>
+            <Input
+              className='flex-1 text-base text-foreground'
+              placeholder='Enter your password'
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+          <View className='flex-row items-center justify-between gap-4'>
+            <Button
+              variant='outline'
+              className='w-[50%]'
+              onPress={() => setPassword(generatePassword())}
+            >
+              <DicesIcon size={32} className='text-foreground' />
+            </Button>
+            <Button
+              className='w-[50%]'
+              onPress={() => Clipboard.setStringAsync(password)}
+            >
+              <ClipboardIcon size={32} color={password ? "#fff" : "#111"} />
+            </Button>
+          </View>
         </View>
 
         <View className='mb-5'>

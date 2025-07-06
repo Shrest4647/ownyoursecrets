@@ -35,7 +35,7 @@ export const validateSecretName = (name: string): boolean => {
 const getSecretFilePath = async (secretName: string): Promise<string> => {
   if (!validateSecretName(secretName)) {
     throw new Error(
-      "Invalid secret name. Only alphanumeric, dash, underscore, and slash are allowed."
+      "Invalid secret name. Only alphanumeric, dash, underscore, and slash are allowed.",
     );
   }
 
@@ -56,12 +56,12 @@ export const saveSecret = async (
   secretName: string,
   secretData: SecretData,
   metadata: string,
-  ageSecretKey: string
+  ageSecretKey: string,
 ): Promise<void> => {
   try {
     const encryptedData = await encryptSecret(
       secretData.password,
-      ageSecretKey
+      ageSecretKey,
     );
     const now = new Date().toISOString();
 
@@ -77,7 +77,7 @@ export const saveSecret = async (
 
     await FileSystem.writeAsStringAsync(
       filePath,
-      JSON.stringify(storedSecret, null, 2)
+      JSON.stringify(storedSecret, null, 2),
     );
     console.log(`Secret '${secretName}' saved successfully to ${filePath}`);
   } catch (error) {
@@ -88,7 +88,7 @@ export const saveSecret = async (
 
 export const getSecret = async (
   secretName: string,
-  ageSecretKey: string
+  ageSecretKey: string,
 ): Promise<{ secretData: SecretData; storedSecret: StoredSecret } | null> => {
   try {
     const vaultPath = await getVaultPath();
@@ -99,7 +99,7 @@ export const getSecret = async (
 
     const decryptedData = await decryptSecret(
       storedSecret.encryptedData,
-      ageSecretKey
+      ageSecretKey,
     );
     const secretData: SecretData = { password: decryptedData };
 
@@ -137,7 +137,7 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
         const storedSecret: StoredSecret = JSON.parse(fileContent);
         storedSecret.name = filePath.substring(
           filePath.lastIndexOf(VAULT_DIR + "/") + VAULT_DIR.length + 1,
-          filePath.lastIndexOf(".jsop")
+          filePath.lastIndexOf(".jsop"),
         );
         secrets.push(storedSecret);
       } catch (parseError) {
@@ -152,7 +152,7 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
 };
 
 export const exportVault = async (
-  ageSecretKey: string
+  ageSecretKey: string,
 ): Promise<Record<string, any>> => {
   try {
     const allStoredSecrets = await listSecrets();
@@ -162,7 +162,7 @@ export const exportVault = async (
       try {
         const decryptedData = await decryptSecret(
           storedSecret.encryptedData,
-          ageSecretKey
+          ageSecretKey,
         );
         const secretData: SecretData = JSON.parse(decryptedData);
 
@@ -181,7 +181,7 @@ export const exportVault = async (
       } catch (decryptError) {
         console.warn(
           `Failed to decrypt or parse secret for export:`,
-          decryptError
+          decryptError,
         );
       }
     }
@@ -194,7 +194,7 @@ export const exportVault = async (
 
 export const importVault = async (
   importedData: Record<string, any>,
-  ageSecretKey: string
+  ageSecretKey: string,
 ): Promise<void> => {
   try {
     for (const secretName in importedData) {
@@ -220,7 +220,7 @@ export const editSecret = async (
   secretName: string,
   newSecretData: SecretData,
   newMetadata: string,
-  ageSecretKey: string
+  ageSecretKey: string,
 ): Promise<void> => {
   try {
     // First, get the existing secret to preserve createdAt timestamp
@@ -231,7 +231,7 @@ export const editSecret = async (
 
     const encryptedData = await encryptSecret(
       JSON.stringify(newSecretData),
-      ageSecretKey
+      ageSecretKey,
     );
     const now = new Date().toISOString();
 
@@ -246,7 +246,7 @@ export const editSecret = async (
 
     await FileSystem.writeAsStringAsync(
       filePath,
-      JSON.stringify(updatedStoredSecret, null, 2)
+      JSON.stringify(updatedStoredSecret, null, 2),
     );
     console.log(`Secret '${secretName}' updated successfully to ${filePath}`);
   } catch (error) {

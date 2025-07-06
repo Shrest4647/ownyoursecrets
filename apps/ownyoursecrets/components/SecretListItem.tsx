@@ -24,7 +24,7 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
   const router = useRouter();
   const { ageSecretKey } = useAuth()!;
   const [decryptedPassword, setDecryptedPassword] = useState<string | null>(
-    null
+    null,
   );
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -50,14 +50,14 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
   };
 
   return (
-    <Accordion type='single' collapsible>
+    <Accordion type="single" collapsible>
       <AccordionItem value={item.name || ""}>
         <AccordionTrigger onPress={handleDecrypt}>
-          <View className='flex-row items-center justify-between w-full'>
-            <Text className='text-lg font-bold text-foreground'>
+          <View className="flex-row items-center justify-between w-full">
+            <Text className="text-lg font-bold text-foreground">
               {item.name}
             </Text>
-            <Text className='text-xs text-muted-foreground mt-1'>
+            <Text className="text-xs text-muted-foreground mt-1">
               {new Date(item.createdAt).toLocaleDateString()}
             </Text>
           </View>
@@ -67,23 +67,23 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
             <Text>Loading...</Text>
           ) : (
             <View>
-              <View className='py-4 w-full'>
-                <Text className='text-lg font-bold'>Password:</Text>
-                <View className='flex-row items-center justify-between'>
-                  <Text className='text-lg'>
+              <View className="py-4 w-full">
+                <Text className="text-lg font-bold">Password:</Text>
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-lg">
                     {showPassword
                       ? decryptedPassword
                       : "*".repeat(decryptedPassword?.length || 0)}
                   </Text>
-                  <View className='flex-row items-center'>
+                  <View className="flex-row items-center">
                     <Button
-                      variant='ghost'
+                      variant="ghost"
                       onPress={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </Button>
                     <Button
-                      variant='ghost'
+                      variant="ghost"
                       onPress={() => copyToClipboard(decryptedPassword || "")}
                     >
                       <ClipboardIcon size={20} />
@@ -91,10 +91,10 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
                   </View>
                 </View>
               </View>
-              <View className='flex-row justify-between space-x-2 gap-2 mt-2'>
+              <View className="flex-row justify-between space-x-2 gap-2 mt-2">
                 <Button
-                  variant='outline'
-                  className='w-[50%]'
+                  variant="outline"
+                  className="w-[50%]"
                   onPress={() =>
                     router.push({
                       pathname: "/EditPassPage",
@@ -105,8 +105,8 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
                   <Text>Edit</Text>
                 </Button>
                 <Button
-                  className='w-[50%]'
-                  variant='destructive'
+                  className="w-[50%]"
+                  variant="destructive"
                   onPress={() => onDelete(item)}
                 >
                   <Text>Delete</Text>
