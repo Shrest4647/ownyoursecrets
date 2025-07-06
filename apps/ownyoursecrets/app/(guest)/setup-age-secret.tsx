@@ -3,16 +3,17 @@ import { Text } from "@/components/ui/text";
 import { View, Alert, Platform, Keyboard } from "react-native";
 import { Sheet, useSheetRef } from "@/components/ui/Sheet";
 import { useEffect } from "react";
-import { Key, Upload } from "lucide-react-native";
+import { Key, Upload, Clipboard as ClipboardIcon } from "lucide-react-native";
 import { useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import * as Crypto from "expo-crypto";
+import * as Clipboard from "expo-clipboard";
 import { BottomSheetView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "react-native";
 import { useAuth } from "@/store/auth-context";
 import { useRouter } from "expo-router";
 import { AGE_SECRET_KEY_STORAGE_KEY } from "@/store/constants";
+import { generateIdentity } from "@/lib/crypto";
 
 export default function AgeSecretKeySetupPage() {
   const auth = useAuth();
@@ -27,7 +28,7 @@ export default function AgeSecretKeySetupPage() {
   const generateNewKey = async () => {
     setIsGenerating(true);
     try {
-      const generatedKey = Crypto.randomUUID();
+      const generatedKey = await generateIdentity();
       setSecretKeyInput(generatedKey);
       bottomSheetRef.current?.expand();
       console.log("Expanded");
@@ -65,6 +66,11 @@ export default function AgeSecretKeySetupPage() {
     }
   };
 
+  const copyToClipboard = async () => {
+    await Clipboard.setStringAsync(secretKeyInput);
+    Alert.alert("Copied!", "Secret key copied to clipboard.");
+  };
+
   const finishSetup = () => {
     if (keySaved) {
       auth?.setSetupComplete(true);
@@ -79,8 +85,8 @@ export default function AgeSecretKeySetupPage() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
-      <SafeAreaView className='flex-1 p-8 bg-background gap-4'>
-        <View className='flex-1 p-8 bg-background gap-4'>
+      <SafeAreaView className='flex-1 p-8 pt-4 bg-background gap-4'>
+        <View className='flex-1 p-2 bg-background gap-4'>
           <Text className='text-3xl font-bold mb-4 text-foreground text-center'>
             Set up Encryption Key
           </Text>
@@ -150,7 +156,7 @@ export default function AgeSecretKeySetupPage() {
             snapPoints={["50%", "70%", "90%"]}
             keyboardBehavior='interactive'
           >
-            <BottomSheetView className='flex-1 pb-4'>
+            <BottomSheetView className='flex-1 pb-8'>
               <View className='flex-1 p-4 mt-4'>
                 <View className='flex gap-2 mb-8'>
                   <Text className='text-lg font-bold mt-8 text-foreground text-center mb-4'>
@@ -168,6 +174,18 @@ export default function AgeSecretKeySetupPage() {
                   />
                 </View>
                 <View className='flex justify-center gap-4'>
+                  <Button
+                    className='w-full py-4 rounded-full flex-row items-center justify-center bg-blue-400 gap-4'
+                    onPress={copyToClipboard}
+                  >
+                    <ClipboardIcon
+                      size={20}
+                      className='text-muted-foreground'
+                    />
+                    <Text className='text-muted-foreground'>
+                      Copy to Clipboard
+                    </Text>
+                  </Button>
                   <Button
                     className='w-full py-4 rounded-full flex-row items-center justify-center bg-green-400 gap-4'
                     onPress={() => {
