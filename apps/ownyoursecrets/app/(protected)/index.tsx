@@ -1,16 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { KeyRoundIcon, ClipboardIcon, LucideEye } from "lucide-react-native";
+import { KeyRoundIcon } from "lucide-react-native";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import { View, FlatList, SafeAreaView } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import Fuse from "fuse.js";
-import { listSecrets, StoredSecret } from "../../lib/vault";
+import { listSecrets, StoredSecret, deleteSecret } from "../../lib/vault";
 import { useAuth } from "@/store/auth-context";
-import * as Clipboard from "expo-clipboard";
-
-import { Pressable } from "react-native-gesture-handler";
+import SecretListItem from "@/components/SecretListItem";
 import {
   Dialog,
   DialogContent,
@@ -20,30 +18,17 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { decrypt } from "@/lib/crypto";
 
 export default function SecretsListingPage() {
   const router = useRouter();
   const [secrets, setSecrets] = useState<StoredSecret[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [filteredSecrets, setFilteredSecrets] = useState<StoredSecret[]>([]);
+  const { ageSecretKey } = useAuth()!;
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSecret, setSelectedSecret] = useState<StoredSecret | null>(
     null
   );
-  const [decryptedPassword, setDecryptedPassword] = useState<string | null>(
-    null
-  );
-
-  const copyToClipboard = async (text: string) => {
-    await Clipboard.setStringAsync(text);
-    // Optionally, provide user feedback that text has been copied
-    alert("Copied to clipboard!");
-  };
-
-  // TODO: Replace with real data
-  // TODO: Read all the secrets from the storage, decrypt them, and display them
-  const [filteredSecrets, setFilteredSecrets] = useState<StoredSecret[]>([]);
-  const { ageSecretKey } = useAuth()!;
 
   const loadSecrets = useCallback(async () => {
     if (!ageSecretKey) {
@@ -68,14 +53,33 @@ export default function SecretsListingPage() {
       setFilteredSecrets(secrets);
     } else {
       const fuse = new Fuse(secrets, {
-        keys: ["name", "metadata"], // Search on name and metadata
+        keys: ["name", "metadata"],
         includeScore: true,
-        threshold: 0.3, // Adjust as needed for fuzziness
+        threshold: 0.3,
       });
       const result = fuse.search(searchQuery);
       setFilteredSecrets(result.map((item) => item.item));
     }
   }, [searchQuery, secrets]);
+
+  const handleDeletePress = (item: StoredSecret) => {
+    setSelectedSecret(item);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (selectedSecret) {
+      try {
+        await deleteSecret(selectedSecret.name!);
+        loadSecrets(); // Refresh the list
+      } catch (error) {
+        console.error("Failed to delete secret:", error);
+      } finally {
+        setIsDeleteDialogOpen(false);
+        setSelectedSecret(null);
+      }
+    }
+  };
 
   return (
     <SafeAreaView className='flex-1 p-5 bg-background'>
@@ -117,36 +121,9 @@ export default function SecretsListingPage() {
         ) : (
           <FlatList
             data={filteredSecrets}
-            keyExtractor={(item) => item.metadata + item.createdAt}
+            keyExtractor={(item) => item.name + item.createdAt}
             renderItem={({ item }) => (
-              <Pressable
-                key={`${item.name}-${item.createdAt}`}
-                onPress={async () => {
-                  setSelectedSecret(item);
-                  if (ageSecretKey) {
-                    const decrypted = await decrypt(
-                      item.encryptedData,
-                      ageSecretKey
-                    );
-                    setDecryptedPassword(decrypted);
-                  }
-                  setIsDialogVisible(true);
-                }}
-              >
-                <View className='p-4 border-b border-zinc-200 bg-card mb-2.5'>
-                  <View className='flex-row items-center justify-between'>
-                    <Text className='text-lg font-bold text-foreground'>
-                      {item.name}
-                    </Text>
-                    <Text className='text-xs text-muted-foreground mt-1'>
-                      {new Date(item.createdAt).toLocaleDateString()}
-                    </Text>
-                  </View>
-                  <Text className='text-muted-foreground line-clamp-1 text-ellipsis'>
-                    {item.metadata}
-                  </Text>
-                </View>
-              </Pressable>
+              <SecretListItem item={item} onDelete={handleDeletePress} />
             )}
           />
         )}
@@ -157,34 +134,24 @@ export default function SecretsListingPage() {
           <Text>New Secret</Text>
         </Button>
       </View>
-      <Dialog open={isDialogVisible} onOpenChange={setIsDialogVisible}>
-        <DialogContent className='w-full'>
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              <Text className='text-lg font-bold'>{selectedSecret?.name}</Text>
-            </DialogTitle>
+            <DialogTitle>Delete Secret</DialogTitle>
             <DialogDescription>
-              <Text className='text-sm'>{selectedSecret?.metadata}</Text>
+              Are you sure you want to delete the secret "{selectedSecret?.name}
+              "? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <View className='py-4 w-full'>
-            <Text className='text-lg font-bold'>Password:</Text>
-            <View className='flex-row items-center justify-between'>
-              <Text className='text-lg'>{decryptedPassword}</Text>
-              <Button
-                variant='ghost'
-                onPress={() => copyToClipboard(decryptedPassword || "")}
-              >
-                <ClipboardIcon size={20} />
-              </Button>
-            </View>
-          </View>
           <DialogFooter>
             <DialogClose asChild>
               <Button variant='outline'>
-                <Text className='text-sm'>Cancel</Text>
+                <Text>Cancel</Text>
               </Button>
             </DialogClose>
+            <Button variant='destructive' onPress={handleDeleteConfirm}>
+              <Text>Delete</Text>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

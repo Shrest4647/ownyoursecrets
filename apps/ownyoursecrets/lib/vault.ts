@@ -5,7 +5,7 @@ import * as FileSystem from "expo-file-system";
 
 // Define the structure for a secret
 export interface SecretData {
-  password?: string;
+  password: string;
   notes?: string;
 }
 
@@ -60,7 +60,7 @@ export const saveSecret = async (
 ): Promise<void> => {
   try {
     const encryptedData = await encryptSecret(
-      JSON.stringify(secretData),
+      secretData.password,
       ageSecretKey
     );
     const now = new Date().toISOString();
@@ -101,7 +101,7 @@ export const getSecret = async (
       storedSecret.encryptedData,
       ageSecretKey
     );
-    const secretData: SecretData = JSON.parse(decryptedData);
+    const secretData: SecretData = { password: decryptedData };
 
     return { secretData, storedSecret };
   } catch (error) {
