@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View } from "react-native";
+import { View, Pressable } from "react-native";
 import {
   Accordion,
   AccordionContent,
@@ -10,11 +10,10 @@ import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
 import { StoredSecret } from "@/lib/vault";
 import { useAuth } from "@/store/auth-context";
-import { decrypt, runtime } from "@/lib/crypto";
+import { decrypt } from "@/lib/crypto";
 import * as Clipboard from "expo-clipboard";
 import { useRouter } from "expo-router";
-import { createWorkletRuntime, runOnRuntime } from "react-native-reanimated";
-import { ClipboardIcon, KeyRoundIcon, LucideEye, X } from "lucide-react-native";
+import { ClipboardIcon, Eye, EyeOff } from "lucide-react-native";
 
 interface SecretListItemProps {
   item: StoredSecret;
@@ -28,6 +27,7 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleDecrypt = useCallback(async () => {
     if (!ageSecretKey || decryptedPassword) return;
@@ -50,9 +50,9 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
   };
 
   return (
-    <Accordion type='single'>
+    <Accordion type='single' collapsible>
       <AccordionItem value={item.name || ""}>
-        <AccordionTrigger onPressOut={handleDecrypt}>
+        <AccordionTrigger onPress={handleDecrypt}>
           <View className='flex-row items-center justify-between w-full'>
             <Text className='text-lg font-bold text-foreground'>
               {item.name}
@@ -71,18 +71,27 @@ const SecretListItem = React.memo(({ item, onDelete }: SecretListItemProps) => {
                 <Text className='text-lg font-bold'>Password:</Text>
                 <View className='flex-row items-center justify-between'>
                   <Text className='text-lg'>
-                    {decryptedPassword || "Loading..."}
+                    {showPassword
+                      ? decryptedPassword
+                      : "*".repeat(decryptedPassword?.length || 0)}
                   </Text>
-                  <Button
-                    variant='ghost'
-                    disabled={!decryptedPassword}
-                    onPress={() => copyToClipboard(decryptedPassword || "")}
-                  >
-                    <ClipboardIcon size={20} />
-                  </Button>
+                  <View className='flex-row items-center'>
+                    <Button
+                      variant='ghost'
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      onPress={() => copyToClipboard(decryptedPassword || "")}
+                    >
+                      <ClipboardIcon size={20} />
+                    </Button>
+                  </View>
                 </View>
               </View>
-              <View className='flex-row justify-between space-x-2 gap-2'>
+              <View className='flex-row justify-between space-x-2 gap-2 mt-2'>
                 <Button
                   variant='outline'
                   className='w-[50%]'
