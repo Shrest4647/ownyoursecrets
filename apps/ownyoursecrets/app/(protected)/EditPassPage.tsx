@@ -90,7 +90,7 @@ export default function EditPassPage() {
           </View>
         </View>
 
-        <View className='mb-5'>
+        <View className='mb-5 gap-4'>
           <Text className='text-base font-medium text-muted-foreground mb-2'>
             Password
           </Text>
@@ -101,10 +101,11 @@ export default function EditPassPage() {
                 placeholder='Enter your password'
                 value={password}
                 onChangeText={setPassword}
-                secureTextEntry
+                secureTextEntry={!showPassword}
               />
 
-              <Pressable
+              <Button
+                variant='ghost'
                 onPress={() => setShowPassword(!showPassword)}
                 className='p-2'
               >
@@ -113,23 +114,24 @@ export default function EditPassPage() {
                 ) : (
                   <Eye size={20} className='text-foreground' />
                 )}
-              </Pressable>
-            </View>
-            <View className='flex-row items-center justify-between gap-4'>
-              <Button
-                variant='outline'
-                className='w-[50%]'
-                onPress={() => setPassword(generatePassword())}
-              >
-                <DicesIcon size={32} className='text-foreground' />
-              </Button>
-              <Button
-                className='w-[50%]'
-                onPress={() => Clipboard.setStringAsync(password)}
-              >
-                <ClipboardIcon size={32} color={password ? "#fff" : "#111"} />
               </Button>
             </View>
+          </View>
+          <View className='flex-row items-center justify-between gap-4'>
+            <Button
+              variant='ghost'
+              className='w-[50%]'
+              onPress={() => setPassword(generatePassword())}
+            >
+              <DicesIcon size={32} className='text-foreground' />
+            </Button>
+            <Button
+              variant='ghost'
+              className='w-[50%]'
+              onPress={() => Clipboard.setStringAsync(password)}
+            >
+              <ClipboardIcon size={32} color={"#111"} />
+            </Button>
           </View>
         </View>
 

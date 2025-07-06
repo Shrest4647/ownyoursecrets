@@ -10,11 +10,18 @@ import { View, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { saveSecret } from "../../lib/vault";
 import { useAuth } from "@/store/auth-context";
-import { ClipboardIcon, CopyIcon, DicesIcon } from "lucide-react-native";
+import {
+  ClipboardIcon,
+  CopyIcon,
+  DicesIcon,
+  Eye,
+  EyeOff,
+} from "lucide-react-native";
 
 const NewPassAddPage = () => {
   const [secretName, setSecretName] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
   const [metadata, setMetadata] = useState("");
 
   const { ageSecretKey } = useAuth()!;
@@ -75,27 +82,42 @@ const NewPassAddPage = () => {
             Password <Text className='text-red-500'>*</Text>
           </Text>
           <View className='flex-row items-center'>
-            <Input
-              className='flex-1 text-base text-foreground'
-              placeholder='Enter your password'
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
+            <View className='flex-row items-center'>
+              <Input
+                className='flex-1 text-base text-foreground'
+                placeholder='Enter your password'
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+
+              <Button
+                variant='ghost'
+                onPress={() => setShowPassword(!showPassword)}
+                className='p-2'
+              >
+                {showPassword ? (
+                  <EyeOff size={20} className='text-foreground' />
+                ) : (
+                  <Eye size={20} className='text-foreground' />
+                )}
+              </Button>
+            </View>
           </View>
           <View className='flex-row items-center justify-between gap-4'>
             <Button
-              variant='outline'
+              variant='ghost'
               className='w-[50%]'
               onPress={() => setPassword(generatePassword())}
             >
               <DicesIcon size={32} className='text-foreground' />
             </Button>
             <Button
+              variant='ghost'
               className='w-[50%]'
               onPress={() => Clipboard.setStringAsync(password)}
             >
-              <ClipboardIcon size={32} color={password ? "#fff" : "#111"} />
+              <ClipboardIcon size={32} color={"#111"} />
             </Button>
           </View>
         </View>
