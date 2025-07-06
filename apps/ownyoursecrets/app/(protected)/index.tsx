@@ -138,18 +138,22 @@ export default function SecretsListingPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Secret</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className='flex-row items-center gap-2 mt-4 pb-2'>
               Are you sure you want to delete the secret "{selectedSecret?.name}
               "? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter>
+          <DialogFooter className='flex-row justify-between gap-4'>
             <DialogClose asChild>
-              <Button variant='outline'>
+              <Button variant='outline' className='w-[50%]'>
                 <Text>Cancel</Text>
               </Button>
             </DialogClose>
-            <Button variant='destructive' onPress={handleDeleteConfirm}>
+            <Button
+              variant='destructive'
+              className='w-[50%]'
+              onPress={handleDeleteConfirm}
+            >
               <Text>Delete</Text>
             </Button>
           </DialogFooter>
