@@ -35,7 +35,7 @@ export const validateSecretName = (name: string): boolean => {
 const getSecretFilePath = async (secretName: string): Promise<string> => {
   if (!validateSecretName(secretName)) {
     throw new Error(
-      "Invalid secret name. Only alphanumeric, dash, underscore, and slash are allowed.",
+      "Invalid secret name. Only alphanumeric, dash, underscore, and slash are allowed."
     );
   }
 
@@ -56,12 +56,12 @@ export const saveSecret = async (
   secretName: string,
   secretData: SecretData,
   metadata: string,
-  ageSecretKey: string,
+  ageSecretKey: string
 ): Promise<void> => {
   try {
     const encryptedData = await encryptSecret(
-      secretData.password,
-      ageSecretKey,
+      JSON.stringify(secretData),
+      ageSecretKey
     );
     const now = new Date().toISOString();
 
@@ -77,7 +77,7 @@ export const saveSecret = async (
 
     await FileSystem.writeAsStringAsync(
       filePath,
-      JSON.stringify(storedSecret, null, 2),
+      JSON.stringify(storedSecret, null, 2)
     );
     console.log(`Secret '${secretName}' saved successfully to ${filePath}`);
   } catch (error) {
@@ -88,7 +88,7 @@ export const saveSecret = async (
 
 export const getSecret = async (
   secretName: string,
-  ageSecretKey: string,
+  ageSecretKey: string
 ): Promise<{ secretData: SecretData; storedSecret: StoredSecret } | null> => {
   try {
     const vaultPath = await getVaultPath();
@@ -99,9 +99,9 @@ export const getSecret = async (
 
     const decryptedData = await decryptSecret(
       storedSecret.encryptedData,
-      ageSecretKey,
+      ageSecretKey
     );
-    const secretData: SecretData = { password: decryptedData };
+    const secretData: SecretData = JSON.parse(decryptedData);
 
     return { secretData, storedSecret };
   } catch (error) {
@@ -137,7 +137,7 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
         const storedSecret: StoredSecret = JSON.parse(fileContent);
         storedSecret.name = filePath.substring(
           filePath.lastIndexOf(VAULT_DIR + "/") + VAULT_DIR.length + 1,
-          filePath.lastIndexOf(".jsop"),
+          filePath.lastIndexOf(".jsop")
         );
         secrets.push(storedSecret);
       } catch (parseError) {
@@ -151,8 +151,32 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
   }
 };
 
-export const exportVault = async (
-  ageSecretKey: string,
+export const exportVault = async (): Promise<Record<string, any>> => {
+  try {
+    const allStoredSecrets = await listSecrets();
+    const exportedData: Record<string, any> = {};
+
+    for (const storedSecret of allStoredSecrets) {
+      try {
+        const secretName = storedSecret.name!;
+
+        exportedData[secretName] = storedSecret;
+      } catch (decryptError) {
+        console.warn(
+          `Failed to decrypt or parse secret for export:`,
+          decryptError
+        );
+      }
+    }
+    return exportedData;
+  } catch (error) {
+    console.error("Failed to export vault:", error);
+    return {};
+  }
+};
+
+export const exportDecryptedVault = async (
+  ageSecretKey: string
 ): Promise<Record<string, any>> => {
   try {
     const allStoredSecrets = await listSecrets();
@@ -160,11 +184,9 @@ export const exportVault = async (
 
     for (const storedSecret of allStoredSecrets) {
       try {
-        const decryptedData = await decryptSecret(
-          storedSecret.encryptedData,
-          ageSecretKey,
-        );
-        const secretData: SecretData = JSON.parse(decryptedData);
+        const secretData: SecretData = {
+          password: storedSecret.decryptedData!,
+        };
 
         // Extract secret name from metadata or derive from file path if needed
         // For now, assuming metadata string is the secret name or can be used to derive it.
@@ -181,7 +203,7 @@ export const exportVault = async (
       } catch (decryptError) {
         console.warn(
           `Failed to decrypt or parse secret for export:`,
-          decryptError,
+          decryptError
         );
       }
     }
@@ -194,21 +216,46 @@ export const exportVault = async (
 
 export const importVault = async (
   importedData: Record<string, any>,
-  ageSecretKey: string,
+  ageSecretKey: string
 ): Promise<void> => {
   try {
-    for (const secretName in importedData) {
-      if (Object.prototype.hasOwnProperty.call(importedData, secretName)) {
-        const secret = importedData[secretName];
-        const secretData: SecretData = {
-          password: secret.password,
-          notes: secret.notes,
-          // Add other fields as necessary
-        };
-        const metadata: string = secret.metadata;
-        await saveSecret(secretName, secretData, metadata, ageSecretKey);
+    Object.entries(importedData).forEach(async ([secretName, storedSecret]) => {
+      const jsonData = JSON.parse(storedSecret);
+      const existingSecret = await getSecret(secretName, ageSecretKey);
+      if (existingSecret) {
+        if (
+          jsonData.updatedAt &&
+          new Date(jsonData.updatedAt) >
+            new Date(existingSecret.storedSecret.updatedAt)
+        ) {
+          const decryptedData = await decryptSecret(
+            existingSecret.storedSecret.encryptedData,
+            ageSecretKey
+          );
+          await editSecret(
+            secretName,
+            {
+              password: decryptedData,
+            },
+            jsonData.metadata,
+            ageSecretKey
+          );
+        }
+      } else {
+        const decryptedData = await decryptSecret(
+          jsonData.encryptedData,
+          ageSecretKey
+        );
+        await saveSecret(
+          secretName,
+          {
+            password: decryptedData,
+          },
+          jsonData.metadata,
+          ageSecretKey
+        );
       }
-    }
+    });
     console.log("Vault imported successfully!");
   } catch (error) {
     console.error("Failed to import vault:", error);
@@ -220,7 +267,7 @@ export const editSecret = async (
   secretName: string,
   newSecretData: SecretData,
   newMetadata: string,
-  ageSecretKey: string,
+  ageSecretKey: string
 ): Promise<void> => {
   try {
     // First, get the existing secret to preserve createdAt timestamp
@@ -231,7 +278,7 @@ export const editSecret = async (
 
     const encryptedData = await encryptSecret(
       JSON.stringify(newSecretData),
-      ageSecretKey,
+      ageSecretKey
     );
     const now = new Date().toISOString();
 
@@ -246,7 +293,7 @@ export const editSecret = async (
 
     await FileSystem.writeAsStringAsync(
       filePath,
-      JSON.stringify(updatedStoredSecret, null, 2),
+      JSON.stringify(updatedStoredSecret, null, 2)
     );
     console.log(`Secret '${secretName}' updated successfully to ${filePath}`);
   } catch (error) {
