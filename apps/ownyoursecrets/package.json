@@ -13,6 +13,7 @@
   "dependencies": {
     "@gorhom/bottom-sheet": "5.1.6",
     "@repo/ui": "workspace:*",
+    "@rn-primitives/dialog": "^1.2.0",
     "@rn-primitives/slot": "^1.2.0",
     "age-encryption": "^0.2.3",
     "class-variance-authority": "^0.7.1",

@@ -1,3 +1,4 @@
+import "react-native-get-random-values";
 import "@/global.css";
 
 import {
@@ -17,6 +18,7 @@ import { useColorScheme } from "@repo/ui/lib/useColorScheme";
 
 import { AuthProvider, useAuth } from "@/store/auth-context";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { PortalHost } from "@rn-primitives/portal";
 
 const LIGHT_THEME: Theme = {
   ...DefaultTheme,
@@ -97,6 +99,7 @@ export default function RootLayout() {
             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
               <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
               <Root />
+              <PortalHost />
             </ThemeProvider>
           </SafeAreaProvider>
         </BottomSheetModalProvider>

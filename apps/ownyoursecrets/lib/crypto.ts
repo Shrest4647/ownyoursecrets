@@ -1,3 +1,5 @@
+import "react-native-get-random-values";
+
 import { Encrypter, Decrypter } from "age-encryption";
 import { bytesToHex, hexToBytes } from "@noble/curves/abstract/utils.js";
 

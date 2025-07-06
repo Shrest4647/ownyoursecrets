@@ -67,7 +67,7 @@ The provided diagram (referenced externally) is the authoritative source for the
 
 ## Key Functionality Notes
 
-- **Encryption/Decryption:** The `encryptSecret(data, ageKey)` and `decryptSecret(encryptedData, ageKey)` functions are implemented and tested in `lib/crypto.ts`. The LLM should focus on _when_ these functions are called.
+- **Encryption/Decryption:** The `encrypt(data, ageKey)` and `decrypt(encryptedData, ageKey)` functions are implemented and tested in `lib/crypto.ts`. The LLM should focus on _when_ these functions are called.
 - **File Storage:** Secrets will be stored as encrypted JSON files (`.jsop`) in a vault directory within the app's document directory, utilizing `expo-file-system`. Secret names can include slashes to create subdirectories (e.g., `google/2fa` will be stored in `vault/google/2fa.jsop`). Secret metadata is stored as a plain text string.
 - **Git Sync:** The LLM should create the UI for Git setup and the component for the manual sync page. It should integrate placeholder calls for Git operations (`clone`, `pull`, `push`).
 - **Vault Management (`lib/vault.ts`):**
@@ -79,6 +79,7 @@ The provided diagram (referenced externally) is the authoritative source for the
   - `importVault(importedData, ageSecretKey)`: Imports multiple secrets from a JSON backup file into the vault.
   - `exportVault(ageSecretKey)`: Exports all secrets from the vault into a single JSON object.
 - **Fuzzy Search:** The `SecretsListingPage` now utilizes `fuse.js` for fuzzy searching, prioritizing secret names and metadata for improved search results.
+- **Empty State Message:** The `SecretsListingPage` now displays an informative message when no secrets are found, guiding users to add new secrets or import existing ones.
 - **Passcode:** A simple PIN/passcode for quick access. This is _not_ used for file encryption (Age handles that), but for app-level access control. It should be stored securely (e.g., using `react-native-keychain` or encrypted preferences).
 
 ## Development Guidelines and Preferences

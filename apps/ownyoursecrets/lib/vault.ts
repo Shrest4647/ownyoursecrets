@@ -135,7 +135,10 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
       try {
         const fileContent = await FileSystem.readAsStringAsync(filePath);
         const storedSecret: StoredSecret = JSON.parse(fileContent);
-        storedSecret.name = filePath.replace(".jsop", "");
+        storedSecret.name = filePath.substring(
+          filePath.lastIndexOf(VAULT_DIR + "/") + VAULT_DIR.length + 1,
+          filePath.lastIndexOf(".jsop")
+        );
         secrets.push(storedSecret);
       } catch (parseError) {
         console.warn(`Failed to parse secret file ${filePath}:`, parseError);
