@@ -23,12 +23,6 @@ importers:
       '@gorhom/bottom-sheet':
         specifier: 5.1.6
         version: 5.1.6(@types/react-native@0.70.19)(@types/react@19.0.14)(react-native-gesture-handler@2.24.0(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native-reanimated@3.17.4(@babel/core@7.28.0)(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
-      '@repo/expo-isomorphic-fs':
-        specifier: workspace:*
-        version: link:../../packages/expo-isomorphic-fs
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@rn-primitives/accordion':
         specifier: ^1.2.0
         version: 1.2.0(@types/react@19.0.14)(react-dom@19.0.0(react@19.0.0))(react-native-web@0.20.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-native@0.79.5(@babel/core@7.28.0)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
