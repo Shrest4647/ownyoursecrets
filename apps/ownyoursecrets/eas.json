@@ -25,7 +25,8 @@
       "developmentClient": true,
       "distribution": "internal",
       "android": {
-        "withoutCredentials": true
+        "withoutCredentials": true,
+        "buildType": "apk"
       },
       "ios": {
         "simulator": true
@@ -42,7 +43,7 @@
       "extends": "base",
       "autoIncrement": true,
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "env": {
         "ENVIRONMENT": "production"
