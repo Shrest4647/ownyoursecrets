@@ -14,12 +14,12 @@ export default function SplashScreen() {
       } else {
         router.replace("/OnboardingPage");
       }
-    }, 2000); // 2 second splash screen
+    }, 1000); // 2 second splash screen
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center bg-background">
-      <Text className="text-4xl font-bold text-foreground">
+    <View className='flex-1 items-center justify-center bg-background'>
+      <Text className='text-4xl font-bold text-foreground'>
         Own Your Secrets
       </Text>
     </View>
