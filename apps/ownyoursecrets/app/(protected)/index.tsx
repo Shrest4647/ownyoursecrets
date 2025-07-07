@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { KeyRoundIcon } from "lucide-react-native";
+import { KeyRoundIcon, Settings, RefreshCcw } from "lucide-react-native";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { View, FlatList, SafeAreaView } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import Fuse from "fuse.js";
@@ -18,6 +18,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { commitAndPush } from "@/lib/git";
 
 export default function SecretsListingPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function SecretsListingPage() {
   const { ageSecretKey } = useAuth()!;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedSecret, setSelectedSecret] = useState<StoredSecret | null>(
-    null,
+    null
   );
 
   const loadSecrets = useCallback(async () => {
@@ -44,9 +45,11 @@ export default function SecretsListingPage() {
     }
   }, [ageSecretKey]);
 
-  useEffect(() => {
-    loadSecrets();
-  }, [loadSecrets]);
+  useFocusEffect(
+    useCallback(() => {
+      loadSecrets();
+    }, [loadSecrets])
+  );
 
   useEffect(() => {
     if (searchQuery === "") {
@@ -72,6 +75,7 @@ export default function SecretsListingPage() {
       try {
         await deleteSecret(selectedSecret.name!);
         loadSecrets(); // Refresh the list
+        commitAndPush(`Delete secret: ${selectedSecret.name!}`);
       } catch (error) {
         console.error("Failed to delete secret:", error);
       } finally {
@@ -82,38 +86,52 @@ export default function SecretsListingPage() {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-5 bg-background">
-      <View className="flex mb-12 h-full">
-        <View className="flex-row justify-between items-center mb-5">
-          <Text className="text-2xl font-bold text-foreground">
+    <SafeAreaView className='flex-1 p-5 bg-background'>
+      <View className='flex mb-12 h-full'>
+        <View className='flex-row justify-between items-center mb-5'>
+          <Text className='text-2xl font-bold text-foreground'>
             Your Secrets
           </Text>
           <Button
+            onPress={loadSecrets}
+            variant='outline'
+            className='rounded-full'
+          >
+            <RefreshCcw size={24} className='text-foreground' />
+          </Button>
+          <Button
             onPress={() => router.push("/SyncPassPage")}
-            variant="outline"
-            className="rounded-full"
+            variant='outline'
+            className='rounded-full ml-2'
           >
             <Text>Sync</Text>
           </Button>
+          <Button
+            onPress={() => router.push("/settings")}
+            variant='outline'
+            className='rounded-full ml-2'
+          >
+            <Settings size={24} className='text-foreground' />
+          </Button>
         </View>
         <Input
-          placeholder="Search..."
-          className="mb-5 h-12 border-2 focus:border-primary bg-card shadow-sm"
-          placeholderTextColor="#A1A1AA" // zinc-400
+          placeholder='Search...'
+          className='mb-5 h-12 border-2 focus:border-primary bg-card shadow-sm'
+          placeholderTextColor='#A1A1AA' // zinc-400
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
         {filteredSecrets.length === 0 ? (
-          <View className="flex-1 items-center justify-center p-5">
-            <KeyRoundIcon size={60} className="text-muted-foreground mb-5" />
-            <Text className="text-lg text-foreground mb-8 text-center font-medium">
+          <View className='flex-1 items-center justify-center p-5'>
+            <KeyRoundIcon size={60} className='text-muted-foreground mb-5' />
+            <Text className='text-lg text-foreground mb-8 text-center font-medium'>
               No secrets found.
             </Text>
-            <Text className="text-base text-muted-foreground text-center mb-5 italic">
+            <Text className='text-base text-muted-foreground text-center mb-5 italic'>
               Start by adding your first secret using the "New Secret" button
               below. Your secrets are securely stored on your device.
             </Text>
-            <Text className="text-base text-muted-foreground text-center italic">
+            <Text className='text-base text-muted-foreground text-center italic'>
               You can also import secrets from a backup or sync with a Git
               repository.
             </Text>
@@ -129,7 +147,7 @@ export default function SecretsListingPage() {
         )}
         <Button
           onPress={() => router.push("/NewPassAddPage")}
-          className="my-5 rounded-full"
+          className='my-5 rounded-full'
         >
           <Text>New Secret</Text>
         </Button>
@@ -138,20 +156,20 @@ export default function SecretsListingPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Secret</DialogTitle>
-            <DialogDescription className="flex-row items-center gap-2 mt-4 pb-2">
+            <DialogDescription className='flex-row items-center gap-2 mt-4 pb-2'>
               Are you sure you want to delete the secret "{selectedSecret?.name}
               "? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-row justify-between gap-4">
+          <DialogFooter className='flex-row justify-between gap-4'>
             <DialogClose asChild>
-              <Button variant="outline" className="w-[50%]">
+              <Button variant='outline' className='w-[50%]'>
                 <Text>Cancel</Text>
               </Button>
             </DialogClose>
             <Button
-              variant="destructive"
-              className="w-[50%]"
+              variant='destructive'
+              className='w-[50%]'
               onPress={handleDeleteConfirm}
             >
               <Text>Delete</Text>

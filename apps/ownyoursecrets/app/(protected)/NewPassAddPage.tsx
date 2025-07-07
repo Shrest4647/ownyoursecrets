@@ -1,7 +1,7 @@
 import "react-native-get-random-values";
 import * as Clipboard from "expo-clipboard";
 import { generatePassword } from "@/lib/crypto";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
@@ -10,13 +10,8 @@ import { View, Alert } from "react-native";
 import { Stack, useRouter } from "expo-router";
 import { saveSecret } from "../../lib/vault";
 import { useAuth } from "@/store/auth-context";
-import {
-  ClipboardIcon,
-  CopyIcon,
-  DicesIcon,
-  Eye,
-  EyeOff,
-} from "lucide-react-native";
+import { ClipboardIcon, DicesIcon, Eye, EyeOff } from "lucide-react-native";
+import { commitAndPush } from "@/lib/git";
 
 const NewPassAddPage = () => {
   const [secretName, setSecretName] = useState("");
@@ -38,7 +33,13 @@ const NewPassAddPage = () => {
     }
 
     try {
-      await saveSecret(secretName, { password }, metadata, ageSecretKey);
+      await saveSecret(
+        secretName.trim(),
+        password.trim(),
+        metadata.trim(),
+        ageSecretKey
+      );
+      commitAndPush(`Add secret: ${secretName}`);
       Alert.alert("Success", `Secret '${secretName}' saved successfully!`);
       setTimeout(() => {
         setSecretName("");
@@ -67,9 +68,10 @@ const NewPassAddPage = () => {
               placeholder='e.g., google/my-account'
               value={secretName}
               onChangeText={setSecretName}
+              autoCapitalize='none'
             />
             <Text className='text-base text-muted-foreground font-medium p-2'>
-              .jsop
+              .json
             </Text>
           </View>
           <Text className='text-sm text-muted-foreground mt-1 italic'>
@@ -89,6 +91,7 @@ const NewPassAddPage = () => {
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
+                autoCapitalize='none'
               />
 
               <Button

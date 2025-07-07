@@ -7,14 +7,20 @@ import * as Sharing from "expo-sharing";
 import * as DocumentPicker from "expo-document-picker";
 import { exportVault, importVault } from "@/lib/vault";
 import { useAuth } from "@/store/auth-context";
-import Upload from "@/lib/icons/Upload";
-import Download from "@/lib/icons/Download";
-import { DownloadIcon, UploadIcon } from "lucide-react-native";
+import {
+  DownloadIcon,
+  UploadIcon,
+  GitPullRequestArrow,
+  HardDrive,
+} from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { Label } from "@/components/ui/label";
 
 export default function SyncPassPage() {
   const [syncStatus, setSyncStatus] = useState("Idle");
   const [currentSyncOption, setCurrentSyncOption] = useState("None"); // e.g., "Git", "Drive", "None"
   const { ageSecretKey } = useAuth()!;
+  const router = useRouter();
 
   const handleSync = () => {
     setSyncStatus("Syncing...");
@@ -79,28 +85,52 @@ export default function SyncPassPage() {
       </Text>
 
       <View className='mb-8 p-4 border border-border rounded-lg'>
-        <Text className='text-lg font-semibold mb-2 text-foreground'>
+        <Text className='text-xl font-semibold mb-2 text-foreground'>
           Sync Status
         </Text>
-        <Text className='text-muted-foreground mb-2'>
-          Current Sync Option: {currentSyncOption}
-        </Text>
-        <Text className='text-muted-foreground mb-4'>{syncStatus}</Text>
-        {currentSyncOption !== "None" ? (
+        <View className='flex-row items-center gap-4'>
+          <Label className='text-foreground mb-2'>Current Sync Option:</Label>
+          <Text className='text-muted-foreground mb-2'>
+            {currentSyncOption}
+          </Text>
+        </View>
+
+        <View className='flex-row items-center gap-4 mb-4'>
+          <Label className='text-foreground mb-2'>Sync Status:</Label>
+          <Text className='text-muted-foreground mb-4'>{syncStatus}</Text>
+        </View>
+
+        <View className='flex-row justify-around mb-4'>
+          <Button
+            variant='outline'
+            onPress={() => {
+              Alert.alert("Coming Soon", "Git sync is not yet implemented.");
+              // setCurrentSyncOption("Git");
+              // router.push("../(guest)/GitSyncRepoSetupPage");
+            }}
+            className={`rounded-full flex-row gap-2`}
+          >
+            <GitPullRequestArrow color='gray' />
+            <Text className='text-foreground'>Sync to Git</Text>
+          </Button>
+          <Button
+            variant='default'
+            onPress={() => {
+              setCurrentSyncOption("Drive");
+              Alert.alert("Coming Soon", "Drive sync is not yet implemented.");
+            }}
+            className={`rounded-full flex-row gap-2`}
+          >
+            <HardDrive color='white' />
+            <Text className='text-white'>Sync to Drive</Text>
+          </Button>
+        </View>
+        {currentSyncOption !== "None" && (
           <Button
             onPress={handleSync}
             className='rounded-full bg-primary-500 active:bg-primary-600'
           >
             <Text className='text-white'>Trigger Sync</Text>
-          </Button>
-        ) : (
-          <Button
-            onPress={() =>
-              Alert.alert("Add Sync", "Navigate to sync setup page.")
-            }
-            className='rounded-full bg-secondary-500 active:bg-secondary-600'
-          >
-            <Text className='text-white'>Add Sync Features</Text>
           </Button>
         )}
       </View>

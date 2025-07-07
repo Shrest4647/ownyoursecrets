@@ -6,9 +6,10 @@ import { generatePassword } from "@/lib/crypto";
 import * as Clipboard from "expo-clipboard";
 import React, { useState, useEffect } from "react";
 import { View, Alert, Pressable } from "react-native";
-import { getSecret, editSecret, SecretData } from "../../lib/vault";
+import { getSecret, editSecret } from "../../lib/vault";
 import { useAuth } from "@/store/auth-context";
 import { ClipboardIcon, DicesIcon, Eye, EyeOff } from "lucide-react-native";
+import { commitAndPush } from "@/lib/git";
 
 export default function EditPassPage() {
   const router = useRouter();
@@ -31,8 +32,7 @@ export default function EditPassPage() {
       try {
         const result = await getSecret(secretNameParam, ageSecretKey);
         if (result) {
-          setPassword(result.secretData.password || "");
-          setNotes(result.secretData.notes || "");
+          setPassword(result.secretData || "");
           setMetadata(result.storedSecret.metadata);
         } else {
           Alert.alert("Error", "Secret not found.");
@@ -58,8 +58,13 @@ export default function EditPassPage() {
     }
 
     try {
-      const newSecretData: SecretData = { password, notes };
-      await editSecret(secretName, newSecretData, metadata, ageSecretKey);
+      await editSecret(
+        secretName.trim(),
+        password.trim(),
+        metadata.trim(),
+        ageSecretKey
+      );
+      commitAndPush(`Update secret: ${secretName}`);
       Alert.alert("Success", `Secret '${secretName}' updated successfully!`);
       router.back();
     } catch (error: any) {
@@ -85,7 +90,7 @@ export default function EditPassPage() {
               editable={false}
             />
             <Text className='text-base text-muted-foreground font-medium p-2'>
-              .jsop
+              .json
             </Text>
           </View>
         </View>
