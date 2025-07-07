@@ -15,8 +15,8 @@ import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as React from "react";
 import { Platform } from "react-native";
-import { NAV_THEME } from "@repo/ui/lib/constants";
-import { useColorScheme } from "@repo/ui/lib/useColorScheme";
+import { NAV_THEME } from "@/lib/constants";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 import { AuthProvider, useAuth } from "@/store/auth-context";
 import { SafeAreaProvider } from "react-native-safe-area-context";

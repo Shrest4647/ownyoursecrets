@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "50f0bb03-3e64-4733-926f-08fa8e24631a"
+      }
+    },
+    "android": {
+      "package": "com.sunilshrestha.ownyoursecrets"
+    }
+  }
+}

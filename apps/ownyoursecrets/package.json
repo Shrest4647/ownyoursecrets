@@ -12,8 +12,6 @@
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "5.1.6",
-    "@repo/ui": "workspace:*",
-    "@repo/expo-isomorphic-fs": "workspace:*",
     "@rn-primitives/accordion": "^1.2.0",
     "@rn-primitives/collapsible": "^1.2.0",
     "@rn-primitives/dialog": "^1.2.0",
@@ -31,6 +29,7 @@
     "expo-file-system": "~18.1.11",
     "expo-haptics": "~14.1.4",
     "expo-image": "~2.3.2",
+    "expo-insights": "~0.9.3",
     "expo-linking": "~7.1.5",
     "expo-navigation-bar": "~4.2.7",
     "expo-router": "~5.1.3",

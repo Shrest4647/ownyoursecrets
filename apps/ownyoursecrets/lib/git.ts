@@ -1,6 +1,6 @@
 import git from "isomorphic-git";
 import http from "isomorphic-git/http/web";
-import ExpoIsomorphicFS from "@repo/expo-isomorphic-fs";
+import ExpoIsomorphicFS from "@/expo-isomorphic-fs";
 import * as SecureStore from "expo-secure-store";
 import * as FileSystem from "expo-file-system";
 import { GIT_SYNC_ENABLED_KEY, VAULT_DIR } from "@/store/constants";
