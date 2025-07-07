@@ -3,12 +3,6 @@ import { VAULT_DIR } from "@/store/constants";
 
 import * as FileSystem from "expo-file-system";
 
-// Define the structure for a secret
-export interface SecretData {
-  password: string;
-  notes?: string;
-}
-
 export interface StoredSecret {
   encryptedData: string;
   decryptedData?: string; // Optional, for internal use
@@ -19,11 +13,12 @@ export interface StoredSecret {
 }
 
 export const getVaultPath = async (): Promise<string> => {
-  const vaultPath = `${FileSystem.documentDirectory}${VAULT_DIR}`;
+  const vaultPath = FileSystem.documentDirectory + VAULT_DIR;
   const dirInfo = await FileSystem.getInfoAsync(vaultPath);
   if (!dirInfo.exists) {
     await FileSystem.makeDirectoryAsync(vaultPath, { intermediates: true });
   }
+  console.log(`Vault path is: ${vaultPath}`);
   return vaultPath;
 };
 
@@ -40,7 +35,7 @@ const getSecretFilePath = async (secretName: string): Promise<string> => {
   }
 
   const vaultPath = await getVaultPath();
-  const fullPath = `${vaultPath}/${secretName}.jsop`;
+  const fullPath = `${vaultPath}/${secretName}.json`;
 
   // Ensure intermediate directories exist if secretName contains slashes
   const dirPath = fullPath.substring(0, fullPath.lastIndexOf("/"));
@@ -54,15 +49,13 @@ const getSecretFilePath = async (secretName: string): Promise<string> => {
 
 export const saveSecret = async (
   secretName: string,
-  secretData: SecretData,
+  secretData: string,
   metadata: string,
   ageSecretKey: string
 ): Promise<void> => {
   try {
-    const encryptedData = await encryptSecret(
-      JSON.stringify(secretData),
-      ageSecretKey
-    );
+    console.log(`Saving secret '${secretName}' with metadata:`, secretData);
+    const encryptedData = await encryptSecret(secretData, ageSecretKey);
     const now = new Date().toISOString();
 
     const storedSecret: StoredSecret = {
@@ -89,9 +82,8 @@ export const saveSecret = async (
 export const getSecret = async (
   secretName: string,
   ageSecretKey: string
-): Promise<{ secretData: SecretData; storedSecret: StoredSecret } | null> => {
+): Promise<{ secretData: string; storedSecret: StoredSecret } | null> => {
   try {
-    const vaultPath = await getVaultPath();
     const filePath = await getSecretFilePath(secretName);
 
     const fileContent = await FileSystem.readAsStringAsync(filePath);
@@ -101,7 +93,7 @@ export const getSecret = async (
       storedSecret.encryptedData,
       ageSecretKey
     );
-    const secretData: SecretData = JSON.parse(decryptedData);
+    const secretData = decryptedData;
 
     return { secretData, storedSecret };
   } catch (error) {
@@ -117,12 +109,16 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
 
     const readDirectoryRecursive = async (directory: string) => {
       const files = await FileSystem.readDirectoryAsync(directory);
-      for (const file of files) {
+      const validFiles = files.filter(
+        (file) => file && !file.startsWith(".") && !file.startsWith("file:")
+      );
+
+      for (const file of validFiles) {
         const filePath = `${directory}/${file}`;
         const fileInfo = await FileSystem.getInfoAsync(filePath);
         if (fileInfo.isDirectory) {
           await readDirectoryRecursive(filePath);
-        } else if (fileInfo.uri.endsWith(".jsop")) {
+        } else if (fileInfo.uri.endsWith(".json")) {
           allFiles.push(filePath);
         }
       }
@@ -137,7 +133,7 @@ export const listSecrets = async (): Promise<StoredSecret[]> => {
         const storedSecret: StoredSecret = JSON.parse(fileContent);
         storedSecret.name = filePath.substring(
           filePath.lastIndexOf(VAULT_DIR + "/") + VAULT_DIR.length + 1,
-          filePath.lastIndexOf(".jsop")
+          filePath.lastIndexOf(".json")
         );
         secrets.push(storedSecret);
       } catch (parseError) {
@@ -184,9 +180,10 @@ export const exportDecryptedVault = async (
 
     for (const storedSecret of allStoredSecrets) {
       try {
-        const secretData: SecretData = {
-          password: storedSecret.decryptedData!,
-        };
+        let decryptedData = await decryptSecret(
+          storedSecret.encryptedData,
+          ageSecretKey
+        );
 
         // Extract secret name from metadata or derive from file path if needed
         // For now, assuming metadata string is the secret name or can be used to derive it.
@@ -195,7 +192,8 @@ export const exportDecryptedVault = async (
         const secretName = storedSecret.metadata; // Assuming metadata is the secret name
 
         exportedData[secretName] = {
-          ...secretData,
+          encryptedData: storedSecret.encryptedData,
+          decryptedData,
           metadata: storedSecret.metadata,
           createdAt: storedSecret.createdAt,
           updatedAt: storedSecret.updatedAt,
@@ -234,9 +232,7 @@ export const importVault = async (
           );
           await editSecret(
             secretName,
-            {
-              password: decryptedData,
-            },
+            decryptedData,
             jsonData.metadata,
             ageSecretKey
           );
@@ -248,9 +244,7 @@ export const importVault = async (
         );
         await saveSecret(
           secretName,
-          {
-            password: decryptedData,
-          },
+          decryptedData,
           jsonData.metadata,
           ageSecretKey
         );
@@ -265,7 +259,7 @@ export const importVault = async (
 
 export const editSecret = async (
   secretName: string,
-  newSecretData: SecretData,
+  newSecretData: string,
   newMetadata: string,
   ageSecretKey: string
 ): Promise<void> => {
@@ -276,10 +270,7 @@ export const editSecret = async (
       throw new Error(`Secret '${secretName}' not found.`);
     }
 
-    const encryptedData = await encryptSecret(
-      JSON.stringify(newSecretData),
-      ageSecretKey
-    );
+    const encryptedData = await encryptSecret(newSecretData, ageSecretKey);
     const now = new Date().toISOString();
 
     const updatedStoredSecret: StoredSecret = {

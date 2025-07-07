@@ -1,7 +1,53 @@
 import * as FileSystem from "expo-file-system";
 
 import { ENOENT } from "./errors";
+interface FileStats {
+  /**
+   * The file mode (permissions). Git primarily cares about the executable bit.
+   * e.g., 0o100644 for a regular file, 0o100755 for an executable.
+   */
+  mode: number;
 
+  /**
+   * The size of the file in bytes.
+   */
+  size: number;
+
+  /**
+   * The last modification time, as a high-resolution timestamp in milliseconds.
+   */
+  mtimeMs: number;
+
+  /**
+   * The last metadata change time, as a high-resolution timestamp in milliseconds.
+   * Git uses this to quickly detect if a file has changed since it was last indexed.
+   */
+  ctimeMs: number;
+
+  /**
+   * A method to check if the entry is a directory.
+   * @returns {boolean}
+   */
+  isDirectory(): boolean;
+
+  /**
+   * A method to check if the entry is a regular file.
+   * @returns {boolean}
+   */
+  isFile(): boolean;
+
+  /**
+   * A method to check if the entry is a symbolic link.
+   * @returns {boolean}
+   */
+  isSymbolicLink(): boolean;
+
+  // Other properties like 'uid', 'gid', 'dev', 'ino' might be present when running
+  // in a full Node.js environment, but are often omitted or set to 0 in browser/abstracted
+  // environments as they are not relevant to Git's core logic.
+  uid?: number;
+  gid?: number;
+}
 interface FsPromises {
   init(name: string, options?: any): Promise<void>;
   mkdir(path: string, options?: FileSystem.MakeDirectoryOptions): Promise<void>;
@@ -18,8 +64,8 @@ interface FsPromises {
   ): Promise<string | Uint8Array>;
   unlink(path: string, options?: any): Promise<void>;
   rename(oldPath: string, newPath: string): Promise<void>;
-  stat(path: string): Promise<FileSystem.FileInfo>;
-  lstat(path: string): Promise<FileSystem.FileInfo>;
+  stat(path: string): Promise<FileStats>;
+  lstat(path: string): Promise<FileStats>;
   symlink(target: string, path: string): Promise<void>;
   readlink(path: string): Promise<string>;
   backFile(path: string, options?: any): Promise<void>;
@@ -68,12 +114,16 @@ class ExpoIsomorphicFS {
     },
 
     readdir: async (path) => {
+      console.log(`Reading directory at path: ${path}`);
       const fullPath = this._getPath(path);
       const files = await FileSystem.readDirectoryAsync(fullPath);
       return files;
     },
 
     writeFile: async (path, data, options) => {
+      console.log(
+        `Writing file at path: ${path}, data type: ${typeof data}, options: ${JSON.stringify(options)}`
+      );
       const fullPath = this._getPath(path);
       let encoding: FileSystem.EncodingType = FileSystem.EncodingType.UTF8;
       if (typeof options === "object" && options?.encoding) {
@@ -93,6 +143,9 @@ class ExpoIsomorphicFS {
     },
 
     readFile: async (path, options) => {
+      console.log(
+        `Reading file at path: ${path}, options: ${JSON.stringify(options)}`
+      );
       const fullPath = this._getPath(path);
       let encoding: FileSystem.EncodingType = FileSystem.EncodingType.UTF8;
       if (typeof options === "object" && options?.encoding) {
@@ -116,6 +169,7 @@ class ExpoIsomorphicFS {
     },
 
     rename: async (oldPath, newPath) => {
+      console.log(`Renaming from ${oldPath} to ${newPath}`);
       const fullOldPath = this._getPath(oldPath);
       const fullNewPath = this._getPath(newPath);
       await FileSystem.moveAsync({
@@ -125,12 +179,22 @@ class ExpoIsomorphicFS {
     },
 
     stat: async (path) => {
+      console.log(`Getting stats for path: ${path}`);
       const fullPath = this._getPath(path);
       const info = await FileSystem.getInfoAsync(fullPath);
       if (!info.exists) {
         throw new ENOENT(`no such file or directory, stat '${fullPath}'`);
       }
-      return info;
+
+      return {
+        ...info,
+        mode: 0o100644, // Default mode for regular files
+        mtimeMs: info.modificationTime,
+        ctimeMs: info.modificationTime,
+        isFile: () => !info.isDirectory,
+        isSymbolicLink: () => false, // expo-file-system does not support symlinks
+        isDirectory: () => info.isDirectory,
+      };
     },
 
     lstat: async (path) => {
