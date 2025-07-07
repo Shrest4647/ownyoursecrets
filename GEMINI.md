@@ -21,6 +21,8 @@
 - **UI:** Standard React Native components, potentially leveraging reusable components from a `packages/ui` library within the monorepo (assume basic React Native components if a specific UI package isn't defined yet).
 - **Storage:** React Native filesystem APIs for storing encrypted files locally.
 - **Sync (Initial):** Git integration for pushing/pulling encrypted files. This will involve Git command execution (likely through a React Native bridge).
+- **pnpm:** For package management and dependency management.
+- **Turborepo:** For managing the monorepo structure, optimizing builds, and running tasks across packages and apps.
 
 ## Project Structure (within the monorepo)
 
@@ -68,7 +70,7 @@ The provided diagram (referenced externally) is the authoritative source for the
 ## Key Functionality Notes
 
 - **Encryption/Decryption:** The `encrypt(data, ageKey)` and `decrypt(encryptedData, ageKey)` functions are implemented and tested in `lib/crypto.ts`. The LLM should focus on _when_ these functions are called.
-- **File Storage:** Secrets will be stored as encrypted JSON files (`.jsop`) in a vault directory within the app's document directory, utilizing `expo-file-system`. Secret names can include slashes to create subdirectories (e.g., `google/2fa` will be stored in `vault/google/2fa.jsop`). Secret metadata is stored as a plain text string.
+- **File Storage:** Secrets will be stored as encrypted JSON files (`.json`) in a vault directory within the app's document directory, utilizing `expo-file-system`. Secret names can include slashes to create subdirectories (e.g., `google/2fa` will be stored in `vault/google/2fa.json`). Secret metadata is stored as a plain text string.
 - **Git Sync:** The LLM should create the UI for Git setup and the component for the manual sync page. It should integrate placeholder calls for Git operations (`clone`, `pull`, `push`).
 - **Vault Management (`lib/vault.ts`):**
   - `saveSecret(secretName, secretData, metadata, ageSecretKey)`: Encrypts and saves a new secret to the vault. Handles creation of subdirectories based on `secretName`.
@@ -92,3 +94,5 @@ The provided diagram (referenced externally) is the authoritative source for the
 ## App Architecture
 
 ![App Diagram](./app-diagram.png)
+
+> NOTE: Compress the chat at the end of the conversation to save token count. Also append highly relevant information to the GEMINI.md file that could be useful for the future llm agents.
