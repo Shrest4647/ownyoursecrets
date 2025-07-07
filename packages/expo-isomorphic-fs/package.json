@@ -1,0 +1,20 @@
+{
+  "name": "@repo/expo-isomorphic-fs",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "expo-file-system": "~17.0.1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.0.1",
+    "typescript": "~5.8.3"
+  }
+}

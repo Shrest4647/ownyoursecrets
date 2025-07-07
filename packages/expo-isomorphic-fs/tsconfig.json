@@ -1,0 +1,7 @@
+{
+  "extends": "../typescript-config/react-native-library.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
