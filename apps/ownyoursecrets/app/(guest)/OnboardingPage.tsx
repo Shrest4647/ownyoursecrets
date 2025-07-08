@@ -3,14 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from "react-native";
-import { Lock } from "lucide-react-native";
+import { Image } from "react-native";
+import { Alert, ScrollView, View } from "react-native";
 import { useAuth } from "@/store/auth-context";
 
 export default function OnboardingPage() {
@@ -36,8 +30,11 @@ export default function OnboardingPage() {
       >
         <View className='bg-background p-8 justify-between h-full'>
           <View className='items-center'>
-            <View className='w-24 h-24 bg-primary/20 rounded-full items-center justify-center mb-6'>
-              <Lock size={48} className='text-primary' />
+            <View className='w-48 h-48 bg-primary/20 rounded-full items-center justify-center mb-6'>
+              <Image
+                source={require("@/assets/icon.png")}
+                className='w-24 h-24'
+              />
             </View>
             <Text className='text-3xl font-bold text-center text-foreground mb-4'>
               Welcome to

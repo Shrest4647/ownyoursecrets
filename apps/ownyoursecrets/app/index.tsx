@@ -19,10 +19,7 @@ export default function SplashScreen() {
 
   return (
     <View className='flex-1 items-center justify-center bg-background'>
-      <Image
-        source={require("../../assets/icon.png")}
-        className='w-32 h-32 mb-4'
-      />
+      <Image source={require("@/assets/icon.png")} className='w-32 h-32 mb-4' />
       <Text className='text-4xl font-bold italic'>Own Your Secrets</Text>
     </View>
   );

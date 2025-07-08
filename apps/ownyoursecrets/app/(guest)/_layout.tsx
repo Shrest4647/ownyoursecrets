@@ -27,7 +27,7 @@ export default function GuestLayout() {
   return (
     <SafeAreaView className='flex-1 bg-background'>
       <Stack
-        screenOptions={{ headerShown: true, keyboardHandlingEnabled: true }}
+        screenOptions={{ headerShown: false, keyboardHandlingEnabled: true }}
       />
     </SafeAreaView>
   );
