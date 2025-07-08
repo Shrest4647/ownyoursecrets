@@ -91,15 +91,12 @@ class ExpoIsomorphicFS {
   public promises: FsPromises = {
     init: async (name, options) => {
       // No-op for now, as expo-file-system doesn't require explicit initialization like IndexedDB
-      console.log(
+      console.info(
         `ExpoIsomorphicFS.init called with name: ${name}, options: ${JSON.stringify(options)}`
       );
     },
 
     mkdir: async (path, options) => {
-      console.log(
-        `Creating directory at path: ${path}, options: ${JSON.stringify(options)}`
-      );
       const fullPath = this._getPath(path);
       await FileSystem.makeDirectoryAsync(fullPath, {
         ...options,
@@ -114,16 +111,12 @@ class ExpoIsomorphicFS {
     },
 
     readdir: async (path) => {
-      console.log(`Reading directory at path: ${path}`);
       const fullPath = this._getPath(path);
       const files = await FileSystem.readDirectoryAsync(fullPath);
       return files;
     },
 
     writeFile: async (path, data, options) => {
-      console.log(
-        `Writing file at path: ${path}, data type: ${typeof data}, options: ${JSON.stringify(options)}`
-      );
       const fullPath = this._getPath(path);
       let encoding: FileSystem.EncodingType = FileSystem.EncodingType.UTF8;
       if (typeof options === "object" && options?.encoding) {
@@ -143,9 +136,6 @@ class ExpoIsomorphicFS {
     },
 
     readFile: async (path, options) => {
-      console.log(
-        `Reading file at path: ${path}, options: ${JSON.stringify(options)}`
-      );
       const fullPath = this._getPath(path);
       let encoding: FileSystem.EncodingType = FileSystem.EncodingType.UTF8;
       if (typeof options === "object" && options?.encoding) {
@@ -169,7 +159,7 @@ class ExpoIsomorphicFS {
     },
 
     rename: async (oldPath, newPath) => {
-      console.log(`Renaming from ${oldPath} to ${newPath}`);
+      console.info(`Renaming from ${oldPath} to ${newPath}`);
       const fullOldPath = this._getPath(oldPath);
       const fullNewPath = this._getPath(newPath);
       await FileSystem.moveAsync({
@@ -179,7 +169,7 @@ class ExpoIsomorphicFS {
     },
 
     stat: async (path) => {
-      console.log(`Getting stats for path: ${path}`);
+      console.info(`Getting stats for path: ${path}`);
       const fullPath = this._getPath(path);
       const info = await FileSystem.getInfoAsync(fullPath);
       if (!info.exists) {
@@ -227,7 +217,7 @@ class ExpoIsomorphicFS {
 
     flush: async () => {
       // No-op for now, as expo-file-system doesn't have a concept of flushing like IndexedDB
-      console.log("ExpoIsomorphicFS.flush called");
+      console.info("ExpoIsomorphicFS.flush called");
     },
   };
 }

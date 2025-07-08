@@ -23,11 +23,6 @@ export async function encrypt(
   "worklet";
 
   try {
-    console.log(
-      "Encrypting data with age secret key:",
-      plaintext,
-      ageSecretKey
-    );
     const ageEncrypt = new Encrypter();
     ageEncrypt.addRecipient(await identityToRecipient(ageSecretKey));
     const encrypted = await ageEncrypt.encrypt(plaintext);

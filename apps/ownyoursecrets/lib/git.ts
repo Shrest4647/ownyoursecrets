@@ -26,7 +26,7 @@ const CORS_PROXY = "https://cors.isomorphic-git.org";
 export const initGitRepo = async () => {
   try {
     await git.init({ fs });
-    console.log("Git repository initialized.");
+    // console.log("Git repository initialized.");
     return true;
   } catch (e) {
     console.error("Error initializing Git repository:", e);
@@ -36,9 +36,9 @@ export const initGitRepo = async () => {
 
 export const cloneGitRepo = async (repoUrl: string) => {
   try {
-    console.log(`Cloning repository from ${repoUrl}...`, REPO_DIR);
+    // console.log(`Cloning repository from ${repoUrl}...`, REPO_DIR);
     pfs.mkdir(REPO_DIR, { intermediates: true });
-    console.log("Created directory for Git repository:", REPO_DIR, "\n");
+    // console.log("Created directory for Git repository:", REPO_DIR, "\n");
     await git.clone({
       fs,
       http,
@@ -49,7 +49,7 @@ export const cloneGitRepo = async (repoUrl: string) => {
       corsProxy: CORS_PROXY,
       onAuth,
     });
-    console.log("Repository cloned successfully.");
+    // console.log("Repository cloned successfully.");
     return true;
   } catch (e) {
     console.error("Error cloning repository:", e);
@@ -67,7 +67,7 @@ export const pullGitRepo = async () => {
       corsProxy: CORS_PROXY,
       onAuth,
     });
-    console.log("Pull successful.");
+    // console.log("Pull successful.");
     return true;
   } catch (e: any) {
     console.error("Error pulling changes:", e);
@@ -93,7 +93,7 @@ export const pushGitRepo = async () => {
       corsProxy: CORS_PROXY,
       onAuth,
     });
-    console.log("Push successful.");
+    // console.log("Push successful.");
     return true;
   } catch (e) {
     console.error("Error pushing changes:", e);
@@ -103,13 +103,13 @@ export const pushGitRepo = async () => {
 
 export const commitChanges = async (message: string) => {
   try {
-    console.log("Committing changes with message:", message);
+    // console.log("Committing changes with message:", message);
     const status = await git.statusMatrix({ fs, dir: "." });
-    console.log("Current Git status:", status);
+    // console.log("Current Git status:", status);
     const filesToAdd = status
       .filter(([, , worktreeStatus]) => worktreeStatus === 2)
       .map(([filepath]) => {
-        console.log("File to add:", filepath);
+        // console.log("File to add:", filepath);
 
         return filepath.split(`/${REPO_DIR}/`)[1]; // Remove the repo directory prefix
       })
@@ -117,12 +117,12 @@ export const commitChanges = async (message: string) => {
 
     if (filesToAdd.length > 0) {
       for (const file of filesToAdd) {
-        console.log(`######### Adding file to staging: ${file}`);
+        // console.log(`######### Adding file to staging: ${file}`);
         await git.add({ fs, dir: ".", filepath: [file] });
       }
-      console.log(`Added ${filesToAdd.length} files to staging.`);
+      // console.log(`Added ${filesToAdd.length} files to staging.`);
     } else {
-      console.log("No changes to commit.");
+      // console.log("No changes to commit.");
       return false;
     }
 
@@ -132,7 +132,7 @@ export const commitChanges = async (message: string) => {
       message,
       author: { name: "OwnYourSecrets App", email: "app@ownyoursecrets.com" },
     });
-    console.log(`Commit successful: ${sha}`);
+    // console.log(`Commit successful: ${sha}`);
     return true;
   } catch (e) {
     console.error("Error committing changes:", e);
@@ -153,7 +153,7 @@ export const getGitStatus = async () => {
 export const isGitRepoInitialized = async () => {
   try {
     const stats = await pfs.stat(`/.git`);
-    console.log("Git repository stats:", stats);
+    // console.log("Git repository stats:", stats);
     return stats.isDirectory; // Check if .git directory exists
   } catch (e) {
     return false; // Directory does not exist or other error
@@ -233,22 +233,22 @@ export const isGitSyncEnabled = async () => {
 export const commitAndPush = async (message: string) => {
   try {
     const isEnabled = await isGitSyncEnabled();
-    console.log("Git sync enabled:", isEnabled);
+    // console.log("Git sync enabled:", isEnabled);
     if (!isEnabled) {
-      console.log("Git sync is not enabled. Skipping commit and push.");
+      // console.log("Git sync is not enabled. Skipping commit and push.");
       return;
     }
 
     const isInitialized = await isGitRepoInitialized();
-    console.log("Git repository initialized:", isInitialized);
+    // console.log("Git repository initialized:", isInitialized);
     if (!isInitialized) {
-      console.log("Git repository not initialized. Skipping commit and push.");
+      // console.log("Git repository not initialized. Skipping commit and push.");
       return;
     }
 
     await commitChanges(message);
     await pushGitRepo();
-    console.log("Changes committed and pushed successfully.");
+    // console.log("Changes committed and pushed successfully.");
   } catch (error) {
     console.error("Error committing and pushing changes:", error);
     throw error;

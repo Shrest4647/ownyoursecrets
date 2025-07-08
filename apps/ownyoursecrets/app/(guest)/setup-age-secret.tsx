@@ -6,7 +6,6 @@ import { Key, Upload, Clipboard as ClipboardIcon } from "lucide-react-native";
 import { useState } from "react";
 import * as Clipboard from "expo-clipboard";
 import { BottomSheetView, BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "react-native";
 import { useAuth } from "@/store/auth-context";
 import { useRouter } from "expo-router";
@@ -32,7 +31,6 @@ export default function AgeSecretKeySetupPage() {
       const generatedKey = await generateIdentity();
       setSecretKeyInput(generatedKey);
       bottomSheetRef.current?.expand();
-      console.log("Expanded");
       bottomSheetRef.current?.present();
     } catch (error) {
       console.error("Error generating key:", error);
@@ -85,7 +83,7 @@ export default function AgeSecretKeySetupPage() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
-      <SafeAreaView className='flex-1 p-8 pt-4 bg-background gap-4'>
+      <View className='flex-1 p-8 pt-4 bg-background gap-4'>
         <View className='flex-1 p-2 bg-background gap-4'>
           <Text className='text-3xl font-bold mb-4 text-foreground text-center'>
             Set up Encryption Key
@@ -207,7 +205,7 @@ export default function AgeSecretKeySetupPage() {
             </BottomSheetView>
           </Sheet>
         </View>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 }

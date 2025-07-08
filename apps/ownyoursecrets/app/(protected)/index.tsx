@@ -3,7 +3,7 @@ import { KeyRoundIcon, Settings, RefreshCcw } from "lucide-react-native";
 import { Input } from "@/components/ui/input";
 import { Text } from "@/components/ui/text";
 import { useRouter, useFocusEffect } from "expo-router";
-import { View, FlatList, SafeAreaView } from "react-native";
+import { View, FlatList } from "react-native";
 import { useState, useEffect, useCallback } from "react";
 import Fuse from "fuse.js";
 import { listSecrets, StoredSecret, deleteSecret } from "../../lib/vault";
@@ -86,7 +86,7 @@ export default function SecretsListingPage() {
   };
 
   return (
-    <SafeAreaView className='flex-1 p-5 bg-background'>
+    <View className='flex-1 p-5 bg-background'>
       <View className='flex mb-12 h-full'>
         <View className='flex-row justify-between items-center mb-5'>
           <Text className='text-2xl font-bold text-foreground'>
@@ -177,6 +177,6 @@ export default function SecretsListingPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </SafeAreaView>
+    </View>
   );
 }

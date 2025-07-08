@@ -12,9 +12,7 @@ export default function CryptoPlayground() {
 
   const handleEncrypt = async () => {
     try {
-      console.log("Encrypting secret:", secret);
       const result = await encrypt(secret, publicKey);
-      console.log("Encrypted:", result);
       setEncrypted(result);
       handleDecrypt();
     } catch (e) {
@@ -25,9 +23,7 @@ export default function CryptoPlayground() {
 
   const handleDecrypt = async () => {
     try {
-      console.log("Decrypting secret:", encrypted);
       const result = await decrypt(encrypted, privateKey);
-      console.log("Decrypted:", result);
       setDecrypted(result);
     } catch (e) {
       setDecrypted(`Error: ${e}`);
@@ -40,16 +36,15 @@ export default function CryptoPlayground() {
 
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder="Secret to encrypt"
+        placeholder='Secret to encrypt'
         value={secret}
         onChangeText={setSecret}
       />
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder="AGE Public Key"
+        placeholder='AGE Public Key'
         value={publicKey}
         onChangeText={(t) => {
-          console.log(t);
           setPublicKey(t);
         }}
       />
@@ -66,10 +61,9 @@ export default function CryptoPlayground() {
 
       <TextInput
         style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
-        placeholder="AGE Private Key"
+        placeholder='AGE Private Key'
         value={privateKey}
         onChangeText={(t) => {
-          console.log(t);
           setPrivateKey(t);
         }}
       />

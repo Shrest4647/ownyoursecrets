@@ -26,7 +26,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.turbo.example",
+      "package": "com.sunilshrestha.ownyoursecrets",
       "edgeToEdgeEnabled": true
     },
     "web": {
@@ -43,6 +43,18 @@
             "parentTheme": "Default",
             "enforceNavigationBarContrast": false
           }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#ffffff",
+          "image": "./assets/splash.png",
+          "dark": {
+            "image": "./assets/splash.png",
+            "backgroundColor": "#000000"
+          },
+          "imageWidth": 200
         }
       ]
     ],

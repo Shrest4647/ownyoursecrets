@@ -18,7 +18,6 @@ export const getVaultPath = async (): Promise<string> => {
   if (!dirInfo.exists) {
     await FileSystem.makeDirectoryAsync(vaultPath, { intermediates: true });
   }
-  console.log(`Vault path is: ${vaultPath}`);
   return vaultPath;
 };
 
@@ -54,7 +53,6 @@ export const saveSecret = async (
   ageSecretKey: string
 ): Promise<void> => {
   try {
-    console.log(`Saving secret '${secretName}' with metadata:`, secretData);
     const encryptedData = await encryptSecret(secretData, ageSecretKey);
     const now = new Date().toISOString();
 
@@ -72,7 +70,6 @@ export const saveSecret = async (
       filePath,
       JSON.stringify(storedSecret, null, 2)
     );
-    console.log(`Secret '${secretName}' saved successfully to ${filePath}`);
   } catch (error) {
     console.error(`Failed to save secret '${secretName}':`, error);
     throw error;
@@ -250,7 +247,6 @@ export const importVault = async (
         );
       }
     });
-    console.log("Vault imported successfully!");
   } catch (error) {
     console.error("Failed to import vault:", error);
     throw error;
@@ -286,7 +282,6 @@ export const editSecret = async (
       filePath,
       JSON.stringify(updatedStoredSecret, null, 2)
     );
-    console.log(`Secret '${secretName}' updated successfully to ${filePath}`);
   } catch (error) {
     console.error(`Failed to update secret '${secretName}':`, error);
     throw error;
@@ -299,7 +294,6 @@ export const deleteSecret = async (secretName: string): Promise<void> => {
     const fileInfo = await FileSystem.getInfoAsync(filePath);
     if (fileInfo.exists) {
       await FileSystem.deleteAsync(filePath);
-      console.log(`Secret '${secretName}' deleted successfully.`);
     } else {
       console.warn(`Secret '${secretName}' not found at ${filePath}.`);
     }

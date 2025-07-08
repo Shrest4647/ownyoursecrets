@@ -26,9 +26,7 @@ export default function SplashScreen() {
         source={require("../../assets/icon.png")}
         className='w-32 h-32 mb-4'
       />
-      <Text className='text-4xl font-bold text-primary italic'>
-        Own Your Secrets
-      </Text>
+      <Text className='text-4xl font-bold italic'>Own Your Secrets</Text>
     </View>
   );
 }

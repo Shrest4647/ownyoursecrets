@@ -3,7 +3,6 @@ import { Text } from "@/components/ui/text";
 import { View, Alert, Platform, Keyboard } from "react-native";
 import { useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/store/auth-context";
@@ -67,7 +66,7 @@ export default function PasscodeSetupPage() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
     >
-      <SafeAreaView className='flex-1 bg-background'>
+      <View className='flex-1 bg-background'>
         <View className='flex-1 px-8 py-4 bg-background gap-4'>
           <Text className='text-3xl font-bold mb-8 text-foreground text-center'>
             Set up Passcode
@@ -116,7 +115,7 @@ export default function PasscodeSetupPage() {
             </View>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </KeyboardAvoidingView>
   );
 }

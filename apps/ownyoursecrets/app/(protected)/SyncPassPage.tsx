@@ -53,7 +53,6 @@ export default function SyncPassPage() {
   };
 
   const handleImport = async () => {
-    console.log("handleImport");
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: ["application/json", "text/plain"], // Allow JSON and plain text files

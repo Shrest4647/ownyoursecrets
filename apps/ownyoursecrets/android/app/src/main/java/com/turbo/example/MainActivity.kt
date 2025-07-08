@@ -1,4 +1,4 @@
-package com.turbo.example
+package com.sunilshrestha.ownyoursecrets
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

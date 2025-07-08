@@ -1,6 +1,7 @@
 import { Stack } from "expo-router";
 import React from "react";
-import { Keyboard, View } from "react-native";
+import { Keyboard } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function GuestLayout() {
   const [keyboardHeight, setKeyboardHeight] = React.useState(0);
@@ -9,13 +10,13 @@ export default function GuestLayout() {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (e) => {
-        setKeyboardHeight(e.endCoordinates.height);
+        // setKeyboardHeight(e.endCoordinates.height);
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
-        setKeyboardHeight(0);
+        // setKeyboardHeight(0);
       }
     );
     return () => {
@@ -24,13 +25,10 @@ export default function GuestLayout() {
     };
   }, []);
   return (
-    <View
-      className='flex-1 bg-background'
-      style={{ paddingBottom: keyboardHeight }}
-    >
+    <SafeAreaView className='flex-1 bg-background'>
       <Stack
         screenOptions={{ headerShown: true, keyboardHandlingEnabled: true }}
       />
-    </View>
+    </SafeAreaView>
   );
 }
