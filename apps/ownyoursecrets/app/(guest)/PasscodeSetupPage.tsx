@@ -7,13 +7,14 @@ import { KeyboardAvoidingView } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/store/auth-context";
 import { OtpInput } from "@/components/ui/otp";
+import * as LocalAuthentication from "expo-local-authentication";
 
 const PASSCODE_STORAGE_KEY = "userPasscode";
 const PASSCODE_ENABLED_KEY = "passcodeEnabled";
 
 export default function PasscodeSetupPage() {
   const router = useRouter();
-  const auth = useAuth();
+  const auth = useAuth()!;
 
   const [passcode, setPasscode] = useState<string>("");
   const [confirmPasscode, setConfirmPasscode] = useState<string>("");
@@ -33,11 +34,46 @@ export default function PasscodeSetupPage() {
     try {
       await SecureStore.setItemAsync(PASSCODE_STORAGE_KEY, passcode);
       await SecureStore.setItemAsync(PASSCODE_ENABLED_KEY, "true");
-      auth?.setPasscodeEnabled(true);
-      Alert.alert("Success", "Passcode set successfully!");
-      auth?.setSetupComplete(true);
+      auth.setPasscodeEnabled(true);
+      auth.setSetupComplete(true);
 
-      router.replace("/"); // Navigate to home after setting passcode
+      const isBiometricSupported = await LocalAuthentication.hasHardwareAsync();
+      if (isBiometricSupported) {
+        Alert.alert(
+          "Enable Biometric Authentication",
+          "Would you like to enable biometric authentication for faster login?",
+          [
+            {
+              text: "Yes",
+              onPress: async () => {
+                const result = await LocalAuthentication.authenticateAsync({
+                  promptMessage: "Authenticate to enable biometrics",
+                });
+                if (result.success) {
+                  auth.setBiometricEnabled(true);
+                  Alert.alert(
+                    "Success",
+                    "Biometric authentication enabled."
+                  );
+                } else {
+                  Alert.alert(
+                    "Info",
+                    "Biometric authentication not enabled. You can enable it later in settings."
+                  );
+                }
+                router.replace("/");
+              },
+            },
+            {
+              text: "No",
+              onPress: () => router.replace("/"),
+              style: "cancel",
+            },
+          ]
+        );
+      } else {
+        router.replace("/"); // Navigate to home after setting passcode
+      }
     } catch (error) {
       console.error("Error setting passcode:", error);
       Alert.alert("Error", "Failed to set passcode.");
@@ -49,7 +85,7 @@ export default function PasscodeSetupPage() {
   const handleSkipPasscode = async () => {
     try {
       await SecureStore.setItemAsync(PASSCODE_ENABLED_KEY, "false");
-      auth?.setPasscodeEnabled(false);
+      auth.setPasscodeEnabled(false);
       Alert.alert(
         "Passcode Skipped",
         "You can set up a passcode later in settings."

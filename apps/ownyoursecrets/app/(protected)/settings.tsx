@@ -155,6 +155,19 @@ export default function SettingsPage() {
 
         <View className='mb-8 gap-4'>
           <Text className='text-lg font-semibold text-foreground mb-2'>
+            Security
+          </Text>
+          <Button
+            variant='secondary'
+            className='rounded-full'
+            onPress={() => router.push('/(protected)/BiometricSettingsPage')}
+          >
+            <Text>Biometric</Text>
+          </Button>
+        </View>
+
+        <View className='mb-8 gap-4'>
+          <Text className='text-lg font-semibold text-foreground mb-2'>
             Danger Zone
           </Text>
           <Button

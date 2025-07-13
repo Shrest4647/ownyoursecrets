@@ -6,6 +6,7 @@ import {
   PASSCODE_ENABLED_KEY,
   AGE_SECRET_KEY_STORAGE_KEY,
   GIT_SYNC_ENABLED_KEY,
+  BIOMETRIC_ENABLED_KEY,
 } from "./constants";
 
 export const AuthContext = React.createContext<{
@@ -22,6 +23,8 @@ export const AuthContext = React.createContext<{
   setUsername: (value: string) => void;
   gitSyncEnabled: boolean;
   setGitSyncEnabled: (value: boolean) => void;
+  biometricEnabled: boolean;
+  setBiometricEnabled: (value: boolean) => void;
 } | null>(null);
 
 export function useAuth() {
@@ -35,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ageSecretKey, setAgeSecretKeyInternal] = React.useState("");
   const [username, setUsernameInternal] = React.useState("");
   const [gitSyncEnabled, setGitSyncEnabledInternal] = React.useState(false);
+  const [biometricEnabled, setBiometricEnabledInternal] = React.useState(false);
 
   React.useEffect(() => {
     const loadAuthStates = async () => {
@@ -58,6 +62,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await SecureStore.getItemAsync(GIT_SYNC_ENABLED_KEY);
         if (gitSyncValue === "true") {
           setGitSyncEnabledInternal(true);
+        }
+        const biometricValue = await SecureStore.getItemAsync(
+          BIOMETRIC_ENABLED_KEY
+        );
+        if (biometricValue === "true") {
+          setBiometricEnabledInternal(true);
         }
         const isLoggedInValue = await SecureStore.getItemAsync("isLoggedIn");
         if (isLoggedInValue === "true") {
@@ -102,6 +112,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setBiometricEnabled = async (value: boolean) => {
+    try {
+      await SecureStore.setItemAsync(BIOMETRIC_ENABLED_KEY, String(value));
+      setBiometricEnabledInternal(value);
+    } catch (error) {
+      console.error("Failed to save biometric enabled state:", error);
+    }
+  };
+
   const setAgeSecretKey = async (value: string) => {
     try {
       await SecureStore.setItemAsync(AGE_SECRET_KEY_STORAGE_KEY, value);
@@ -126,6 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAgeSecretKey("");
     setUsername("");
     setGitSyncEnabled(false);
+    setBiometricEnabled(false);
   };
 
   return (
@@ -143,6 +163,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUsername,
         gitSyncEnabled,
         setGitSyncEnabled,
+        biometricEnabled,
+        setBiometricEnabled,
         resetApp,
       }}
     >
