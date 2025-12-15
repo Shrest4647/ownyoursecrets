@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Own Your Secrets - Secure, Local, Yours.</title>
+    <meta name="description" content="A secure, self-managed mobile application for saving secrets locally and syncing with self-owned resources.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#007AFF',
+                        dark: '#000000',
+                        surface: '#1c1c1e',
+                        'surface-highlight': '#2c2c2e',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(28, 28, 30, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #A1A1AA 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 0%, rgba(0, 122, 255, 0.15) 0%, rgba(0, 0, 0, 0) 50%);
+        }
+    </style>
+</head>
+<body class="bg-black text-white font-sans antialiased selection:bg-primary selection:text-white overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass border-b-0 border-white/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0 flex items-center gap-2">
+                    <span class="font-semibold text-xl tracking-tight">Own Your Secrets</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#features" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Features</a>
+                        <a href="#security" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">Security</a>
+                        <a href="https://github.com/Shrest4647/ownyoursecrets" target="_blank" class="hover:text-primary transition-colors px-3 py-2 rounded-md text-sm font-medium">GitHub</a>
+                    </div>
+                </div>
+                <div>
+                    <a href="#download" class="bg-white text-black hover:bg-gray-200 px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                        Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden hero-gradient">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+                <h2 class="text-primary font-semibold tracking-wide uppercase text-sm mb-4">Privacy First</h2>
+            </div>
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-gradient">
+                    Your Secrets.<br>
+                    Under Your Control.
+                </h1>
+            </div>
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400 mb-10">
+                    A secure, offline-first vault for your passwords and notes. 
+                    Sync with your own Git repository. No central servers. No tracking.
+                </p>
+            </div>
+            <div class="opacity-0 animate-fade-in-up flex flex-col sm:flex-row justify-center gap-4" style="animation-delay: 0.4s;">
+                <a href="https://play.google.com/store/apps/details?id=com.sunilshrestha.ownyoursecrets" target="_blank" class="flex items-center justify-center gap-3 bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all transform hover:scale-105">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" /></svg>
+                    <span>Google Play</span>
+                </a>
+                <a href="https://github.com/Shrest4647/ownyoursecrets/releases" target="_blank" class="flex items-center justify-center gap-3 glass text-white px-8 py-4 rounded-full font-semibold hover:bg-white/10 transition-all transform hover:scale-105">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" /></svg>
+                    <span>Download APK</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Abstract Background Elements -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-30 animate-pulse-slow"></div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Everything you need to manage your secrets securely, without compromising on convenience.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Encryption at Rest</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Your secrets are encrypted using industry-standard `age` and `sops` protocols before they ever touch your storage.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Git Synchronization</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Sync your encrypted vault across devices using your own Git repository. You own the infrastructure.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Offline First</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Access your secrets anytime, anywhere. No internet connection required for basic functionality.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.2-2.85.577-4.147"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Biometric Unlock</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Secure your vault with your device's biometric authentication (FaceID, TouchID) for quick access.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Fuzzy Search</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Instantly find what you're looking for with powerful fuzzy search capabilities.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="glass p-8 rounded-3xl hover:bg-white/5 transition-colors">
+                    <div class="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">File-Based Vault</h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        Your data is stored as standard files. Easy to backup, easy to move, easy to own.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="py-24 bg-surface-highlight relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="lg:flex lg:items-center lg:gap-16">
+                <div class="lg:w-1/2 mb-12 lg:mb-0">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">Security by Design</h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        We believe that your secrets should belong to you, and only you. That's why we built Own Your Secrets with a zero-knowledge architecture.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">No tracking or analytics</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">Open source code for transparency</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-primary flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-gray-300">You control the sync server (Git)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="lg:w-1/2">
+                    <div class="glass p-8 rounded-3xl border border-white/10">
+                        <pre class="text-sm text-gray-400 overflow-x-auto font-mono">
+<code>{
+  "algorithm": "age",
+  "version": "1.0",
+  "encrypted_data": "LW... (encrypted)",
+  "recipient": "age1...",
+  "mac": "..."
+}</code>
+                        </pre>
+                        <div class="mt-4 text-center text-sm text-gray-500">
+                            Example of how your data is stored
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="download" class="py-32 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-black to-surface-highlight opacity-50"></div>
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+            <h2 class="text-4xl md:text-5xl font-bold mb-8">Ready to take control?</h2>
+            <p class="text-xl text-gray-400 mb-12">
+                Download Own Your Secrets today and experience true privacy.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="https://play.google.com/store/apps/details?id=com.ownyoursecrets" target="_blank" class="flex items-center justify-center gap-3 bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-200 transition-all transform hover:scale-105">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.92 20.16,13.19L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z" /></svg>
+                    <span>Google Play</span>
+                </a>
+                <a href="https://github.com/Shrest4647/ownyoursecrets/releases" target="_blank" class="flex items-center justify-center gap-3 glass text-white px-8 py-4 rounded-full font-semibold hover:bg-white/10 transition-all transform hover:scale-105">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z" /></svg>
+                    <span>Download APK</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/10 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-gray-500 text-sm">
+                &copy; 2025 Own Your Secrets. Open Source.
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-500 hover:text-white transition-colors text-sm">Privacy Policy</a>
+                <a href="#" class="text-gray-500 hover:text-white transition-colors text-sm">Terms of Service</a>
+                <a href="https://github.com/Shrest4647/ownyoursecrets" class="text-gray-500 hover:text-white transition-colors text-sm">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
